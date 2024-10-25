@@ -10,3 +10,4 @@ psycopg2-binary==2.9.7
 # Production server for Django
 gunicorn==20.1.0
 
+whitenoise==6.4.0 
