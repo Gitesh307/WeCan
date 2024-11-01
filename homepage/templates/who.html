@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     Who Are We | We Can Project
@@ -22,6 +23,34 @@
                     <p>
                         Our goal is to make recycling easier and more efficient, contributing to a cleaner environment and supporting local communities.
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <h2 class="text-center col-12 mb-4">Meet The Team</h2>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg h-100 border-0">
+                <div class="card-body text-center">
+                    <img src="{% static 'img/founder.jpg' %}" alt="Founder Headshot" class="rounded shadow-sm mb-3 border" width="240" height="180">
+                    <h4 class="card-title font-weight-bold">Miguel A Reyes</h4>
+                    <p class="text-muted">Founder</p>
+                    <p>Description</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg h-100 border-0">
+                <div class="card-body text-center">
+                    <img src="{% static 'img/cofounder.jpg' %}" alt="Co-Founder Headshot" class="rounded shadow-sm mb-3 border" width="240" height="180">
+                    <h4 class="card-title font-weight-bold">Ron Waddell</h4>
+                    <p class="text-muted">Co-Founder</p>
+                    <p>Description</p>
                 </div>
             </div>
         </div>
