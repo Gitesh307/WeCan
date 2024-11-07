@@ -20,31 +20,31 @@ We Can Project - Home
         <div class="features__inner p-relative z-index-1 white-bg">
             <div class="row justify-content-center">
                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-                <div class="card p-6" style="width: 18rem;">
+                <div class="card p-6 h-100" style="width: 18rem;">
                      <img src="{% static 'img/How it works.jpg' %}" width="42" height="265" class="card-img-top" alt="...">
                     <div class="card-body">
                      <h5 class="card-title">How it works</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <p class="card-text">WeCan App makes recycling simple and rewarding. Register and log in to receive a unique QR code. Schedule a convenient pickup or drop-off time for your cans and bottles. Our team ensures efficient collection, tracks your recycling history, and updates your account balance, allowing you to redeem rewards effortlessly.</p>
                         <a class="btn btn-primary {% if request.path == '/works/' %}active{% endif %}" href="/works/">How It Works</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-          <div class="card p-6" style="width: 18rem;">
+          <div class="card p-6 h-100" style="width: 18rem;">
             <img src="{% static 'img/Vision and mission.jpg' %}" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title">Vision and Mission</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <p class="card-text">Our vision is a sustainable future where recycling is second nature to everyone. We aim to empower communities with a user-friendly platform to maximize recycling efforts, reduce waste, and protect our planet for generations to come. Together, we strive to make eco-friendly living easy and accessible.<br></p>
               <a class="btn btn-primary {% if request.path == '/works/' %}active{% endif %}" href="#">Vision and Mission</a>
             </div>
           </div>
         </div>
           <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
-          <div class="card p-6" style="width: 18rem;">
+          <div class="card p-6 h-100" style="width: 18rem;">
             <img src="{% static 'img/Schedule.jpg' %}" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title">Schedule a Pickup</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <p class="card-text">Save time and effort with our hassle-free pickup service. Choose a time that works best for you, and our team will collect your recyclables from your doorstep. Just scan your QR code during pickup, and let us handle the rest while you track your progress and rewards.<br></p>
               <a class="btn btn-primary {% if request.path == '/schedule/' %}active{% endif %}" href="/schedule/">Schedule a Pickup</a>
             </div>
           </div>
@@ -92,6 +92,12 @@ We Can Project - Home
         margin: 3px;
         padding: 5px;
     }
+    .card-body {
+    flex: 1; /* Fills available vertical space */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
     .features__inner {
         border-radius: 10px;
         margin-top: -70px;
