@@ -7,7 +7,7 @@ We Can Project - Home
 
 {% block content %}
     <div class="hero-section d-flex justify-content-center align-items-center">
-        <div class="text-center">
+        <div class="text-center mt-5">
             <h1 class="display-3 font-weight-bold">We Can</h1>
             <p class="lead mb-4">Recycle Better with WeCan</p>
             <div class="button-group">
@@ -16,10 +16,45 @@ We Can Project - Home
             </div>
         </div>
     </div>
-
+    <div class="container mt-5">
+        <div class="features__inner p-relative z-index-1 white-bg">
+            <div class="row justify-content-center">
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+                <div class="card p-6" style="width: 18rem;">
+                     <img src="{% static 'img/How it works.jpg' %}" width="42" height="265" class="card-img-top" alt="...">
+                    <div class="card-body">
+                     <h5 class="card-title">How it works</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a class="btn btn-primary {% if request.path == '/works/' %}active{% endif %}" href="/works/">How It Works</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+          <div class="card p-6" style="width: 18rem;">
+            <img src="{% static 'img/Vision and mission.jpg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Vision and Mission</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a class="btn btn-primary {% if request.path == '/works/' %}active{% endif %}" href="#">Vision and Mission</a>
+            </div>
+          </div>
+        </div>
+          <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
+          <div class="card p-6" style="width: 18rem;">
+            <img src="{% static 'img/Schedule.jpg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Schedule a Pickup</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a class="btn btn-primary {% if request.path == '/schedule/' %}active{% endif %}" href="/schedule/">Schedule a Pickup</a>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
     <div class="container feedback-section mt-5">
         <h2 class="text-center mb-5">Customer Feedback</h2>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center ">
             <div class="col-md-3">
                 <div class="card text-center p-3">
                     <i class="bi bi-person-circle customer-icon mx-auto"></i>
@@ -51,8 +86,34 @@ We Can Project - Home
 
 {% block styles %}
 <style>
+    .card-img-top{
+        width: 50%%;
+        height: 50%%;
+        margin: 3px;
+        padding: 5px;
+    }
+    .features__inner {
+        border-radius: 10px;
+        margin-top: -70px;
+        padding: 40px 60px 10px;
+        -ms-box-shadow: 0 30px 50px rgba(26, 31, 35, .07);
+        -o-box-shadow: 0 30px 50px rgba(26, 31, 35, .07);
+        box-shadow: 0 30px 50px rgba(26, 31, 35, .07);
+    }
+    
+    .white-bg {
+        background: white;
+    }
+    
+    .p-relative {
+        position: relative;
+    }
+    
+    .z-index-1 {
+        z-index: 1;
+    }
     .hero-section {
-        height: 60vh;
+        height: 80vh;
         background: url("{% static 'img/image.png' %}") no-repeat center center;
         background-size: cover;
         background-attachment: fixed;
@@ -67,7 +128,6 @@ We Can Project - Home
         font-weight: 700;
         margin-bottom: 20px;
     }
-
     .hero-section p {
         font-size: 1.5rem;
         font-weight: 500;
@@ -119,6 +179,9 @@ We Can Project - Home
 
         .feedback-section h2 {
             font-size: 1.5rem;
+        }
+        .d-sm-flex {
+            display: flex !important;
         }
     }
 </style>

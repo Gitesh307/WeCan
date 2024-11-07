@@ -1,9 +1,11 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
-
+from .models import Subscriber
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def home(request):
@@ -61,4 +63,12 @@ def login_view(request):
     form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
-
+@login_required
+def profile_view(request):
+    try:
+        # Attempt to fetch the subscriber using the user's email
+        subscriber = Subscriber.objects.get(email=request.user.email)
+        return render(request, 'profile.html', {'subscriber': subscriber})
+    except Subscriber.DoesNotExist:
+        # If no matching subscriber is found, show a user-friendly error message
+        return HttpResponse("No subscriber profile found for this account. Please contact support.")

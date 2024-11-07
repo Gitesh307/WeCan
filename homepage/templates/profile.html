@@ -1,0 +1,30 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <h1>Welcome, {{ subscriber.fname }} {{ subscriber.lname }}</h1>
+    <p><strong>Account ID:</strong> {{ subscriber.account_id }}</p>
+    <p><strong>Email:</strong> {{ subscriber.email }}</p>
+    <p><strong>Phone:</strong> {{ subscriber.phone }}</p>
+    <p><strong>Account Created On:</strong> {{ subscriber.created_at }}</p>
+
+    <h2>Recycling History</h2>
+    <ul>
+        {% for history in subscriber.recycling_history.all %}
+            <li>
+                <strong>Date:</strong> {{ history.date }} |
+                <strong>Items Recycled:</strong> {{ history.items_recycled }} |
+                <strong>Points Earned:</strong> {{ history.points_earned }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Account Balance</h2>
+    <p><strong>Balance:</strong> ${{ subscriber.account_balance.balance }}</p>
+</body>
+</html>

@@ -11,7 +11,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'), 
     path('resources/', views.resources, name='resources'), 
     path('works/', views.works, name='works'), 
-    path('who/', views.who, name='who'), 
+    path('who/', views.who, name='who'),
     path('policy/', views.policy, name='policy'), 
     path('terms/', views.terms, name='terms'), 
     path('blog/', views.blog, name='blog'), 
@@ -21,4 +21,5 @@ urlpatterns = [
     path('register/', views.register, name='register'), 
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='homepage'), name='logout'),
+    path('profile/', views.profile_view, name='profile'),
 ]
