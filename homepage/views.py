@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .forms import UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .models import Subscriber
 
 # Create your views here.
 
@@ -61,4 +63,9 @@ def login_view(request):
     form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
+@login_required
+def profile(request):
+    # Get the Subscriber instance related to the logged-in user
+    subscriber = get_object_or_404(Subscriber, account_id=request.user.id)
+    return render(request, 'profile.html', {'subscriber': subscriber}) 
 
