@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,3 +133,33 @@ LOGIN_REDIRECT_URL = '/'
 
 # added manually
 LOGIN_REDIRECT_URL = '/profile/'
+
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+# First superuser creation
+if (
+    os.environ.get("DJANGO_SUPERUSER_USERNAME") and
+    os.environ.get("DJANGO_SUPERUSER_EMAIL") and
+    os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+):
+    if not User.objects.filter(username=os.environ.get("DJANGO_SUPERUSER_USERNAME")).exists():
+        User.objects.create_superuser(
+            os.environ.get("DJANGO_SUPERUSER_USERNAME"),
+            os.environ.get("DJANGO_SUPERUSER_EMAIL"),
+            os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+        )
+
+# Second superuser creation
+if (
+    os.environ.get("DJANGO_SUPERUSER2_USERNAME") and
+    os.environ.get("DJANGO_SUPERUSER2_EMAIL") and
+    os.environ.get("DJANGO_SUPERUSER2_PASSWORD")
+):
+    if not User.objects.filter(username=os.environ.get("DJANGO_SUPERUSER2_USERNAME")).exists():
+        User.objects.create_superuser(
+            os.environ.get("DJANGO_SUPERUSER2_USERNAME"),
+            os.environ.get("DJANGO_SUPERUSER2_EMAIL"),
+            os.environ.get("DJANGO_SUPERUSER2_PASSWORD")
+        )
