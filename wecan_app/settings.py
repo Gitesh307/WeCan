@@ -133,3 +133,12 @@ LOGIN_REDIRECT_URL = '/'
 
 # added manually
 LOGIN_REDIRECT_URL = '/profile/'
+
+#For contact function
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail's SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'dahearn2021@gmail.com'
+EMAIL_HOST_PASSWORD = 'yiqx kagj igdg ebhe'  # app-specific password
+DEFAULT_FROM_EMAIL = 'dahearn2021@gmail.com'
