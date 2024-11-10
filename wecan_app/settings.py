@@ -142,3 +142,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'dahearn2021@gmail.com'
 EMAIL_HOST_PASSWORD = 'yiqx kagj igdg ebhe'  # app-specific password
 DEFAULT_FROM_EMAIL = 'dahearn2021@gmail.com'
+
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wecan_app.settings')

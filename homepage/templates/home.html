@@ -11,24 +11,26 @@ We Can Project - Home
             <h1 class="display-3 font-weight-bold">We Can</h1>
             <p class="lead mb-4">Recycle Better with WeCan</p>
             <div class="button-group">
-                <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg me-2">Login</a>
-                <a href="{% url 'register' %}" class="btn btn-dark btn-lg">Get Started!</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg me-2 mb-5">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-dark btn-lg mb-5">Get Started!</a>
             </div>
         </div>
     </div>
     <div class="container mt-5">
         <div class="features__inner p-relative z-index-1 white-bg">
             <div class="row justify-content-center">
+
                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
                 <div class="card p-6 h-100" style="width: 18rem;">
                      <img src="{% static 'img/How it works.jpg' %}" width="42" height="265" class="card-img-top" alt="...">
                     <div class="card-body">
                      <h5 class="card-title">How it works</h5>
-                    <p class="card-text">WeCan makes recycling simple and rewarding. Register and log in to receive a unique QR code. Schedule a convenient pickup or drop-off time for your cans and bottles. Our team ensures efficient collection, tracks your recycling history, and updates your account balance, allowing you to redeem rewards effortlessly.</p>
+                    <p class="card-text">WeCan App makes recycling simple and rewarding. Register and log in to receive a unique QR code. Schedule a convenient pickup or drop-off time for your cans and bottles. Our team ensures efficient collection, tracks your recycling history, and updates your account balance, allowing you to redeem rewards effortlessly.</p>
                         <a class="btn btn-primary {% if request.path == '/works/' %}active{% endif %}" href="/works/">How It Works</a>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6">
           <div class="card p-6 h-100" style="width: 18rem;">
             <img src="{% static 'img/Vision and mission.jpg' %}" class="card-img-top" alt="...">
@@ -82,22 +84,77 @@ We Can Project - Home
         </div>
     </div>
     <br>
+<div class="faq-section text-center text-white py-5" style="background-color: #1a3a7e;">
+    <div class="container">
+        <h2 class="display-4 mb-4">FAQs</h2>
+
+        <div class="faq-item mb-5">
+            <h3 class="faq-question">What does the "MA 5¢" label mean?</h3>
+            <p class="faq-answer">
+                This label indicates that the container is eligible for redemption in Massachusetts. Consumers pay a deposit of 5 cents when they purchase beverages in marked containers. This deposit can be refunded when the container is returned to a participating redemption center.
+            </p>
+        </div>
+
+        <div class="faq-item mb-5">
+            <h3 class="faq-question">How can I get my 5¢ deposit back?</h3>
+            <p class="faq-answer">
+                You can get your refund by returning eligible containers to a redemption center or through WeCan's convenient pickup service in Central Massachusetts. Schedule a pickup with WeCan, and we'll collect your recyclables right from your doorstep. We process payments promptly after collection, making it easy for you to get your deposit back without leaving home.
+            </p>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'works' %}" class="text-warning font-weight-bold">Learn More</a>
+        </div>
+    </div>
+</div>
+
+<div class="schedule-pickup-section text-center text-white">
+    <div class="container py-5">
+        <h2 class="display-4 mb-3">Schedule a Pickup!</h2>
+        <p class="lead mb-4">
+            Residents of Central Massachusetts - Schedule a pickup with WeCan LLC to have your recyclable materials collected right from your doorstep. Enjoy the convenience of recycling at home while contributing to a greener community. Payments are processed promptly upon collection!
+        </p>
+        <a href="{% url 'schedule' %}" class="btn btn-lg schedule-btn">SCHEDULE PICKUP!</a>
+    </div>
+</div>
+<br>
 {% endblock %}
 
 {% block styles %}
 <style>
-    .card-img-top{
-        width: 50%%;
+    .card-img-top {
+         width: 50%%;
         height: 50%%;
         margin: 3px;
-        padding: 5px;
+        transition: transform 0.3s ease, opacity 0.3s ease; /* Added */
+        opacity: 0;
+        animation: fadeIn 1s ease-in forwards;
     }
-    .card-body {
-    flex: 1; /* Fills available vertical space */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    @keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
+    .card-img-top:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    .card-body {
+        flex: 1; /* Fills available vertical space */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added */
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
     .features__inner {
         border-radius: 10px;
         margin-top: -70px;
@@ -106,20 +163,21 @@ We Can Project - Home
         -o-box-shadow: 0 30px 50px rgba(26, 31, 35, .07);
         box-shadow: 0 30px 50px rgba(26, 31, 35, .07);
     }
-    
+
     .white-bg {
         background: white;
     }
-    
+
     .p-relative {
         position: relative;
     }
-    
+
     .z-index-1 {
         z-index: 1;
     }
+
     .hero-section {
-        height: 80vh;
+        height: 100vh;
         background: url("{% static 'img/image.png' %}") no-repeat center center;
         background-size: cover;
         background-attachment: fixed;
@@ -127,22 +185,40 @@ We Can Project - Home
         justify-content: center;
         align-items: center;
         border-bottom: 1px solid #dee2e6;
+        transition: background-color 0.3s ease; /* Added */
+    }
+    .hero-section:hover {
+        background-color: rgba(0, 0, 0, 0.4); /* Overlay effect on hover */
     }
 
     .hero-section h1 {
         font-size: 4rem;
         font-weight: 700;
         margin-bottom: 20px;
+        transition: opacity 0.5s ease, transform 0.5s ease; /* Added */
     }
+
     .hero-section p {
         font-size: 1.5rem;
         font-weight: 500;
         margin-bottom: 30px;
+        transition: opacity 0.5s ease, transform 0.5s ease; /* Added */
+    }
+
+    .hero-section:hover h1,
+    .hero-section:hover p {
+        transform: translateY(-10px);
+        opacity: 1;
     }
 
     .button-group a {
         margin: 0 10px;
         padding: 10px 20px;
+        transition: all 0.3s ease; /* Added */
+    }
+    .button-group a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .feedback-section h2 {
@@ -153,12 +229,18 @@ We Can Project - Home
         font-size: 80px;
         color: #6c757d;
         margin-bottom: 20px;
+        transition: transform 0.3s ease; /* Added */
+    }
+    .customer-icon:hover {
+        transform: scale(1.2);
+        color: #28a745;
     }
 
     .card {
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         border: none;
         border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added */
     }
 
     .card-title {
@@ -190,5 +272,95 @@ We Can Project - Home
             display: flex !important;
         }
     }
+
+    .schedule-pickup-section {
+        background: url("{% static 'img/background2.png' %}") no-repeat center center;
+        background-size: cover;
+        position: relative;
+        color: white;
+        transition: background-color 0.5s ease; /* Added */
+    }
+
+    .schedule-pickup-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    .schedule-pickup-section:hover {
+        background-color: rgba(0, 0, 0, 0.7); /* Darkens background overlay */
+    }
+
+    .schedule-pickup-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .schedule-btn {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Added */
+    }
+
+    .schedule-btn:hover {
+        background-color: #218838;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .faq-section {
+        background-color: #2e8b57 !important;
+        color: #ffffff;
+        padding: 50px 0;
+        transition: background-color 0.5s ease; /* Added */
+    }
+
+    .faq-section:hover {
+        background-color: #246b45; /* Slightly darkened on hover */
+    }
+
+    .faq-section h2 {
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .faq-item {
+        margin-bottom: 30px;
+    }
+
+    .faq-question {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 10px;
+        transition: color 0.3s ease; /* Added */
+    }
+
+    .faq-question:hover {
+        color: #ffcc00; /* Highlighted color */
+    }
+
+    .faq-answer {
+        font-size: 1rem;
+        color: #d1d1d1 !important;
+        max-width: 700px;
+        margin: 0 auto;
+        transition: max-height 0.5s ease, opacity 0.5s ease; /* Added */
+    }
+
+    .faq-item:hover .faq-answer {
+        max-height: 200px;
+        opacity: 1;
+    }
 </style>
 {% endblock %}
+
