@@ -12,6 +12,7 @@ from .models import ContactSubmission
 def home(request):
     return render(request, "home.html", {})
 
+@login_required
 def schedule(request):
     return render(request, 'schedule.html')
 
@@ -90,3 +91,12 @@ def contact_view(request):
 
 def contact_success_view(request):
     return render(request, 'contact_success.html')
+
+def request(request):
+    return render(request, 'request.html') 
+
+def pickuphistory(request):
+    return render(request, 'pickuphistory.html') 
+
+def settings(request):
+    return render(request, 'settings.html') 

@@ -6,6 +6,14 @@ We Can Project - Home
 {% endblock %}
 
 {% block content %}
+    <div class="banner-message text-center py-4 text-white">
+        <div class="container">
+            <p class="mb-0 banner-text">
+                From Cans to Change: <span class="highlight">Redeeming Lives</span> and <span class="highlight">Creating Value Beyond the Nickel</span> for a Cleaner, Greener Future.
+            </p>
+        </div>
+    </div>
+
     <div class="hero-section d-flex justify-content-center align-items-center">
         <div class="text-center mt-5">
             <h1 class="display-3 font-weight-bold">We Can</h1>
@@ -122,8 +130,31 @@ We Can Project - Home
 
 {% block styles %}
 <style>
+
+    .banner-message {
+        background-color: #28a745; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        font-size: 1.5rem; 
+        font-weight: 500; 
+        border-bottom: 4px solid #1e7e34; 
+    }
+
+    .banner-text {
+        font-size: 1.25rem; 
+        line-height: 1.8; 
+        margin: 0 auto;
+    }
+
+    .highlight {
+        font-weight: bold; 
+        color: #ffffff; 
+        background-color: rgba(255, 255, 255, 0.2); 
+        padding: 0 5px;
+        border-radius: 5px; 
+    }
+
     .card-img-top {
-         width: 50%%;
+        width: 50%%;
         height: 50%%;
         margin: 3px;
         transition: transform 0.3s ease, opacity 0.3s ease; /* Added */
@@ -270,6 +301,15 @@ We Can Project - Home
         }
         .d-sm-flex {
             display: flex !important;
+        }
+        .banner-message {
+            font-size: 1.2rem; 
+            padding: 15px 0;
+        }
+
+        .banner-text {
+            font-size: 1rem; 
+            max-width: 90%; 
         }
     }
 

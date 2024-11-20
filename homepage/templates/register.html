@@ -5,30 +5,55 @@ Sign-Up
 {% endblock %}
 
 {% block content %}
-<h3>Register here</h3>
-<hr>
-{% comment %} <form action="" method="POST">
-   {% csrf_token %}
-   {% for field in form %}
-       <div>
-           <p>{{ field.label }}: <br> {{ field }}</p>
-           {% for error in field.errors %}
-               <small style="color: red">{{ error }}</small>
-           {% endfor %}
-       </div>
-   {% endfor %}
-   <button type="submit">Register</button>
-</form> {% endcomment %}
-<form action="" method="POST">
-   {% csrf_token %}
-   {% for field in form %}
-       <div>
-           <p>{{ field.label }}: <br> {{ field }}</p>
-           {% for error in field.errors %}
-               <small style="color: red">{{ error }}</small>
-           {% endfor %}
-       </div>
-   {% endfor %}
-   <button type="submit">Register</button>
-</form>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; background-color: #f5f5f5; border-radius: 10px;">
+        <h3 class="text-center mb-4">Create an Account</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary px-4">Register</button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <div class="text-center">
+            <p class="mb-2">Already have an account?</p>
+            <a href="{% url 'login' %}" class="btn btn-outline-secondary">Login</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #ffffff; 
+    }
+    .card {
+        background-color: #f5f5f5; 
+        border-radius: 10px;
+    }
+    h3 {
+        font-weight: bold;
+        color: #333;
+    }
+    .btn-primary {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    button {
+        font-size: 1rem;
+        padding: 0.5rem 1.5rem; 
+    }
+</style>
 {% endblock %}

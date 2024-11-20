@@ -3,6 +3,7 @@
 {% block title %}
     Schedule | We Can Project
 {% endblock %}
+
 {% block content %}
     <style>
         body {
@@ -34,17 +35,13 @@
             border: 0;
             border-top: 1px solid #ccc;
         }
-        .schedule-option:visited {
-        color: #00cc00; /* Same color as unvisited links */
-    }
     </style>
     <div class="schedule-container">
-        <div class="schedule-option">Request Pickup</div>
+        <div class="schedule-option" onclick="location.href='/request/'">Request Pickup</div>
         <hr>
-        <div class="schedule-option">Pickup History</div>
+        <div class="schedule-option" onclick="location.href='/pickuphistory/'">Pickup History</div>
         <hr>
-        <div class="schedule-option">Settings</div>
+        <div class="schedule-option" onclick="location.href='/settings/'">Settings</div>
         <hr>
-        <div class="schedule-option">Log Out</div>
     </div>
 {% endblock %}
