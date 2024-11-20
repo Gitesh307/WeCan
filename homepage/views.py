@@ -4,8 +4,6 @@ from .forms import UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .models import Subscriber
-from django.core.mail import send_mail
-from django.conf import settings
 from .forms import ContactForm
 from .models import ContactSubmission
 
@@ -15,7 +13,7 @@ def home(request):
     return render(request, "home.html", {})
 
 def schedule(request):
-    return render(request, 'schedule.html') 
+    return render(request, 'schedule.html')
 
 def services(request):
     return render(request, 'services.html') 
