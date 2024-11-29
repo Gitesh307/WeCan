@@ -1,7 +1,9 @@
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import UserRegistrationForm
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import UserRegistrationForm, SubscriberUpdateForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from .models import Subscriber
 from .forms import ContactForm
@@ -99,4 +101,46 @@ def pickuphistory(request):
     return render(request, 'pickuphistory.html') 
 
 def settings(request):
-    return render(request, 'settings.html') 
+    user = request.user
+
+    # Fetch the subscriber for the logged-in user
+    subscriber = Subscriber.objects.filter(account_id=request.user.id).first()
+    if not subscriber:
+        # Redirect to an error page if the subscriber profile is missing
+        return render(request, "error.html", {"message": "No profile found!"})
+
+    if request.method == 'POST':
+        # Bind the submitted data to the form
+        subscriber_form = SubscriberUpdateForm(request.POST, instance=subscriber)
+
+        if subscriber_form.is_valid():
+            # Save the subscriber updates
+            updated_subscriber = subscriber_form.save(commit=False)
+
+            # Update password if provided
+            password = subscriber_form.cleaned_data.get('password')
+            if password:
+                updated_subscriber.password = make_password(password)
+
+            # Save changes to the database
+            updated_subscriber.save()
+
+            messages.success(request, "Your changes have been saved successfully!")
+            return redirect('settings')  # Redirect to the same page to prevent re-submission
+
+        else:
+            # Collect the first error and display it
+            latest_error = None
+            for field, errors in subscriber_form.errors.items():
+                latest_error = f"{subscriber_form[field].label}: {errors[0]}"
+                break
+            messages.error(request, latest_error)
+
+    else:
+        # Pre-fill the form with the current subscriber data
+        subscriber_form = SubscriberUpdateForm(instance=subscriber)
+
+    context = {
+        'subscriber_form': subscriber_form,
+    }
+    return render(request, 'settings.html', context)

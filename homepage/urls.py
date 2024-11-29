@@ -24,6 +24,7 @@ urlpatterns = [
     path('contact/success/', views.contact_success_view, name='contact_success'),
     path('request/', views.request, name='request'),
     path('pickuphistory/', views.pickuphistory, name='pickuphistory'), 
-    path('settings/', views.settings, name='settings'), 
+    path('settings/', views.settings, name='settings'),
+    # path('change_password/', views.change_password, name='change_password'),
  
 ]

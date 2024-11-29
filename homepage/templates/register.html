@@ -10,7 +10,6 @@ Sign-Up
         <h3 class="text-center mb-4">Create an Account</h3>
         <form action="" method="POST">
             {% csrf_token %}
-            
             {% for field in form %}
             <div class="mb-3 row">
                 <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>

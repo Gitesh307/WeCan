@@ -1,9 +1,128 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Settings | We Can Project
+My Account Information
 {% endblock %}
 
 {% block content %}
-    
+<div class="container">
+    <h1 class="mb-4">My Account Information</h1>
+   <form method="post" action="">
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <th>Account Number:</th>
+                    <td>{{ user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Email Address / Login:</th>
+                    <td>
+                        {{ subscriber_form.email }}
+                        {% for error in subscriber_form.email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>First Name:</th>
+                    <td>
+                        {{ subscriber_form.fname }}
+                        {% for error in subscriber_form.fname.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Last Name:</th>
+                    <td>
+                        {{ subscriber_form.lname }}
+                        {% for error in subscriber_form.lname.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Phone:</th>
+                    <td>
+                        {{ subscriber_form.phone }}
+                        {% for error in subscriber_form.phone.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Street Address:</th>
+                    <td>
+                        {{ subscriber_form.street_address }}
+                        {% for error in subscriber_form.street_address.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>City:</th>
+                    <td>
+                        {{ subscriber_form.city }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>State:</th>
+                    <td>
+                        {{ subscriber_form.state }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Zip Code:</th>
+                    <td>
+                        {{ subscriber_form.zip_code }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Payment Method:</th>
+                    <td>
+                        {{ subscriber_form.payment_method }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Password:</th>
+                    <td>
+                        {{ subscriber_form.password }}
+                        {% for error in subscriber_form.password.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Confirm Password:</th>
+                    <td>
+                        {{ subscriber_form.confirm_password }}
+                        {% for error in subscriber_form.confirm_password.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+    </div>
+</form>
+</div>
+
+<style>
+    .table th {
+        text-align: left;
+        width: 30%;
+    }
+    .table td input, .table td select, .table td textarea {
+        width: 100%;
+    }
+    .table-borderless th, .table-borderless td {
+        padding: 8px 12px;
+        border-top: none;
+    }
+</style>
 {% endblock %}

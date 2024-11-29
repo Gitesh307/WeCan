@@ -8,6 +8,11 @@ class Subscriber(models.Model):
     lname = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
+    street_address = models.CharField(max_length=255, default="")  # Default empty string
+    city = models.CharField(max_length=100, default="")  # Default empty string
+    state = models.CharField(max_length=2, default="NA")  # Default to "NA"
+    zip_code = models.CharField(max_length=10, default="00000")  # Default value
+    payment_method = models.CharField(max_length=10, default="paypal")  # Default to "paypal"
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
