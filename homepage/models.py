@@ -27,14 +27,14 @@ class RecyclingHistory(models.Model):
     points_earned = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Recycling history for {self.subscriber.name} on {self.date}"
+        return f"Recycling history for {self.subscriber.fname} on {self.date}"
 
 class AccountBalance(models.Model):
     subscriber = models.OneToOneField(Subscriber, on_delete=models.CASCADE, related_name='account_balance')
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f"{self.subscriber.name}'s balance"
+        return f"{self.subscriber.fname}'s balance"
     
 class ContactSubmission(models.Model):
     first_name = models.CharField(max_length=50)
