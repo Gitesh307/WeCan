@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Subscriber
 from .forms import ContactForm
 from .models import ContactSubmission
+from .models import PickupRequest
+from .forms import PickupRequestForm
 
 # Create your views here.
 
@@ -94,8 +96,25 @@ def contact_view(request):
 def contact_success_view(request):
     return render(request, 'contact_success.html')
 
-def request(request):
-    return render(request, 'request.html') 
+@login_required
+def request_pickup(request):
+    user = request.user
+    pickup_request = PickupRequest.objects.filter(user=user).last()
+
+    if request.method == "POST":
+        form = PickupRequestForm(request.POST)
+        if form.is_valid():
+            ready_for_pickup = form.cleaned_data['ready_for_pickup']
+            pickup_request = PickupRequest.objects.create(
+                user=user,
+                ready_for_pickup=ready_for_pickup,
+                status="Pending"
+            )
+            return redirect('request_pickup')
+
+    return render(request, 'request.html', {
+        'pickup_request': pickup_request
+    })
 
 def pickuphistory(request):
     return render(request, 'pickuphistory.html') 

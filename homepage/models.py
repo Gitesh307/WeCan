@@ -1,6 +1,8 @@
 # models.py
 
 from django.db import models
+from django.contrib.auth.models import User
+
 
 class Subscriber(models.Model):
     account_id = models.AutoField(primary_key=True)
@@ -43,4 +45,19 @@ class ContactSubmission(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.email}"
+    
+
+class PickupRequest(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ready_for_pickup = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pickup Request by {self.user.username} - {self.status}"
 

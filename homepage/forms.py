@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Subscriber
 from django.core.exceptions import ValidationError
+from .models import PickupRequest
+
 
 class SubscriberUpdateForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
@@ -109,3 +111,12 @@ class ContactForm(forms.Form):
     last_name = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Your Email'}))
     message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Your Message'}), required=True)
+
+
+class PickupRequestForm(forms.ModelForm):
+    class Meta:
+        model = PickupRequest
+        fields = ['ready_for_pickup']
+        widgets = {
+            'ready_for_pickup': forms.Select(choices=[(True, 'Yes'), (False, 'No')])
+        }
