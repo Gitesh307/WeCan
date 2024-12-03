@@ -51,6 +51,7 @@ class PickupRequest(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
+        ('Completed', 'Completed'),  
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,4 +61,3 @@ class PickupRequest(models.Model):
 
     def __str__(self):
         return f"Pickup Request by {self.user.username} - {self.status}"
-

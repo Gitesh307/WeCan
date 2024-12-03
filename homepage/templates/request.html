@@ -36,17 +36,28 @@
                 <h4 class="mb-3 text-center">Pickup Request Status</h4>
                 <div>
                     {% if pickup_request %}
-                        <p><strong>Status:</strong> {{ pickup_request.status }}</p>
                         <p><strong>Request Date:</strong> {{ pickup_request.created_at|date:"F j, Y g:i A" }}</p>
+                        <p><strong>Status:</strong> {{ pickup_request.status }}</p>
+                        
                         {% if pickup_request.status == "Accepted" %}
                             <div class="alert alert-success mt-3" role="alert">
                                 Our team will be out to pick up your bin on the designated day, depending on the zone of your house.
                             </div>
+                        {% elif pickup_request.status == "Completed" %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                Thank you for using WeCan! Your bin pickup and collection are now complete. 
+                                <br>To view your recycling rewards and account balances, please visit your 
+                                <a href="{% url 'profile' %}" class="alert-link">Recycling History</a>.
+                                <br>We appreciate your efforts in making a difference for our planet!
+                            </div>
+                        
+                        
                         {% endif %}
                     {% else %}
                         <p class="text-muted">No pickup request submitted yet.</p>
                     {% endif %}
                 </div>
+                
             </div>
         </div>
     </div>

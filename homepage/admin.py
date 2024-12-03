@@ -18,8 +18,12 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
 class PickupRequestAdmin(admin.ModelAdmin):
     list_display = ['user', 'ready_for_pickup', 'status', 'created_at']
     list_filter = ['status']
-    actions = ['mark_as_accepted']
+    actions = ['mark_as_accepted', 'mark_as_completed']  
 
     def mark_as_accepted(self, request, queryset):
         queryset.update(status='Accepted')
     mark_as_accepted.short_description = "Mark selected requests as Accepted"
+
+    def mark_as_completed(self, request, queryset):  
+        queryset.update(status='Completed')
+    mark_as_completed.short_description = "Mark selected requests as Completed"
