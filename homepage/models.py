@@ -1,4 +1,5 @@
 # models.py
+from decimal import Decimal
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -58,6 +59,29 @@ class PickupRequest(models.Model):
     ready_for_pickup = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original_status = PickupRequest.objects.get(pk=self.pk).status
+            if original_status != self.status and self.status == "Completed":
+                self.add_to_recycling_history()
+        super(PickupRequest, self).save(*args, **kwargs)
+
+    def add_to_recycling_history(self):
+        # Fetch the subscriber associated with the user
+        try:
+            subscriber = Subscriber.objects.get(email=self.user.email)
+        except Subscriber.DoesNotExist:
+            raise ValueError(f"No Subscriber found for user with email: {self.user.email}")
+        # Add entry to RecyclingHistory when status is completed
+        items_recycled = 10  # Example logic for items recycled
+        points_earned = items_recycled * 0.5  # Example: 0.5 points per item
+
+        RecyclingHistory.objects.create(
+            subscriber=subscriber,
+            items_recycled=items_recycled,
+            points_earned=points_earned
+        )
 
     def __str__(self):
         return f"Pickup Request by {self.user.username} - {self.status}"

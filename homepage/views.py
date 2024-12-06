@@ -73,6 +73,7 @@ def login_view(request):
 def profile(request):
     # Get the Subscriber instance related to the logged-in user
     subscriber = get_object_or_404(Subscriber, account_id=request.user.id)
+    subscriber.refresh_from_db()  # Fetch the latest data from the database
     return render(request, 'profile.html', {'subscriber': subscriber}) 
 
 
