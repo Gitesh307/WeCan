@@ -137,3 +137,13 @@ LOGIN_REDIRECT_URL = '/profile/'
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wecan_app.settings')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'wecanmass@gmail.com'  
+EMAIL_HOST_PASSWORD = 'ofoq tqof phye uxhe'  
+DEFAULT_FROM_EMAIL = 'noreply@wecanmass.org' 
+
