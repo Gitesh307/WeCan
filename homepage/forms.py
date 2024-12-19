@@ -12,7 +12,8 @@ class SubscriberUpdateForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput, required=False)
     class Meta:
         model = Subscriber
-        fields = ['fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code', 'payment_method']
+        fields = ['fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code', 'payment_method',
+                  'profile_picture']
         widgets = {
             'state': forms.Select(choices=[(state, state) for state in [
                 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY',

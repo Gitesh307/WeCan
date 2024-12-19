@@ -2,6 +2,8 @@ from django.urls import path
 from homepage import views
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("", views.home, name='homepage'),
@@ -28,3 +30,6 @@ urlpatterns = [
     # path('change_password/', views.change_password, name='change_password'),
  
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

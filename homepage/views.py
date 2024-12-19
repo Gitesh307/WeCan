@@ -1,5 +1,3 @@
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import UserRegistrationForm, SubscriberUpdateForm
@@ -121,8 +119,6 @@ def pickuphistory(request):
     return render(request, 'pickuphistory.html') 
 
 def settings(request):
-    user = request.user
-
     # Fetch the subscriber for the logged-in user
     subscriber = Subscriber.objects.filter(account_id=request.user.id).first()
     if not subscriber:
@@ -131,7 +127,7 @@ def settings(request):
 
     if request.method == 'POST':
         # Bind the submitted data to the form
-        subscriber_form = SubscriberUpdateForm(request.POST, instance=subscriber)
+        subscriber_form = SubscriberUpdateForm(request.POST, request.FILES, instance=subscriber)
 
         if subscriber_form.is_valid():
             # Save the subscriber updates
@@ -139,8 +135,15 @@ def settings(request):
 
             # Update password if provided
             password = subscriber_form.cleaned_data.get('password')
+            confirm_password = subscriber_form.cleaned_data.get('confirm_password')
+
             if password:
-                updated_subscriber.password = make_password(password)
+                if password == confirm_password:
+                    # Use set_password to update the password properly
+                    updated_subscriber.linked_account.set_password(password)
+                else:
+                    messages.error(request, "Passwords do not match.")
+                    return render(request, 'settings.html', {'subscriber_form': subscriber_form})
 
             # Save changes to the database
             updated_subscriber.save()
