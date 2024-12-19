@@ -43,6 +43,10 @@
                             <div class="alert alert-success mt-3" role="alert">
                                 Our team will be out to pick up your bin on the designated day, depending on the zone of your house.
                             </div>
+                        {% elif pickup_request.status == "Picked Up" %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                We have successfully picked up your recyclables. We will notify you once we have processed your bags and it is complete. Thank you for recycling with WeCan!
+                            </div>                            
                         {% elif pickup_request.status == "Completed" %}
                             <div class="alert alert-success mt-3" role="alert">
                                 Thank you for using WeCan! Your bin pickup and collection are now complete. 

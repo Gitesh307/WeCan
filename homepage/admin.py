@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import Subscriber, RecyclingHistory, AccountBalance, ContactSubmission
 from .models import PickupRequest
 
-# Register the models
 admin.site.register(Subscriber)
 admin.site.register(RecyclingHistory)
 admin.site.register(AccountBalance)
@@ -18,12 +17,16 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
 class PickupRequestAdmin(admin.ModelAdmin):
     list_display = ['user', 'ready_for_pickup', 'status', 'created_at']
     list_filter = ['status']
-    actions = ['mark_as_accepted', 'mark_as_completed']  
+    actions = ['mark_as_accepted', 'mark_as_picked_up', 'mark_as_completed']
 
     def mark_as_accepted(self, request, queryset):
         queryset.update(status='Accepted')
     mark_as_accepted.short_description = "Mark selected requests as Accepted"
 
-    def mark_as_completed(self, request, queryset):  
+    def mark_as_picked_up(self, request, queryset):
+        queryset.update(status='Picked Up')  
+    mark_as_picked_up.short_description = "Mark selected requests as Picked Up"
+
+    def mark_as_completed(self, request, queryset):
         queryset.update(status='Completed')
     mark_as_completed.short_description = "Mark selected requests as Completed"

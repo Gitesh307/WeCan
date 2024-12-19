@@ -3,6 +3,10 @@ from decimal import Decimal
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class Subscriber(models.Model):
@@ -54,6 +58,7 @@ class PickupRequest(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
+        ('Picked Up', 'Picked Up'),  
         ('Completed', 'Completed'),  
     ]
 
@@ -70,14 +75,12 @@ class PickupRequest(models.Model):
         super(PickupRequest, self).save(*args, **kwargs)
 
     def add_to_recycling_history(self):
-        # Fetch the subscriber associated with the user
         try:
             subscriber = Subscriber.objects.get(email=self.user.email)
         except Subscriber.DoesNotExist:
             raise ValueError(f"No Subscriber found for user with email: {self.user.email}")
-        # Add entry to RecyclingHistory when status is completed
-        items_recycled = 10  # Example logic for items recycled
-        points_earned = items_recycled * 0.5  # Example: 0.5 points per item
+        items_recycled = 10  
+        points_earned = items_recycled * 0.5  
 
         RecyclingHistory.objects.create(
             subscriber=subscriber,
