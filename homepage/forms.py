@@ -10,6 +10,7 @@ from .models import PickupRequest
 class SubscriberUpdateForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
     confirm_password = forms.CharField(widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = Subscriber
         fields = ['fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code', 'payment_method',
@@ -21,9 +22,9 @@ class SubscriberUpdateForm(forms.ModelForm):
                 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
             ]]),
             'payment_method': forms.Select(choices=[
-                ('paypal', 'PayPal'),
+                ('cashapp', 'CashApp'),
                 ('venmo', 'Venmo'),
-                ('check', 'Check'),
+                ('zelle', 'Zelle'),
             ]),
         }
 
@@ -74,14 +75,17 @@ class UserRegistrationForm(UserCreationForm):
     ], label="State")
     zip_code = forms.CharField(max_length=10, label="Zip Code")
     payment_method = forms.ChoiceField(choices=[
-        ('paypal', 'PayPal'),
+        ('cashapp', 'CashApp'),
         ('venmo', 'Venmo'),
-        ('check', 'Check')
+        ('zelle', 'Zelle')
     ], label="Payment Method")
+
+    profile_picture = forms.ImageField(required=False, label="Profile Picture")
 
     class Meta:
         model = User
-        fields = ['username', 'fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code', 'payment_method', 'password1', 'password2']
+        fields = ['username', 'fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code',
+                  'payment_method', 'password1', 'password2', 'profile_picture']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -93,6 +97,7 @@ class UserRegistrationForm(UserCreationForm):
             user.save()
             # Create Subscriber instance
             Subscriber.objects.create(
+                linked_account=user,
                 account_id=user.id,
                 fname=self.cleaned_data['fname'],
                 lname=self.cleaned_data['lname'],
@@ -102,16 +107,21 @@ class UserRegistrationForm(UserCreationForm):
                 city=self.cleaned_data['city'],
                 state=self.cleaned_data['state'],
                 zip_code=self.cleaned_data['zip_code'],
-                payment_method=self.cleaned_data['payment_method']
+                payment_method=self.cleaned_data['payment_method'],
+                profile_picture=self.cleaned_data.get('profile_picture')
             )
         return user
 
 
 class ContactForm(forms.Form):
-    first_name = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
-    last_name = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Your Email'}))
-    message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Your Message'}), required=True)
+    first_name = forms.CharField(max_length=50, required=True,
+                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(max_length=50, required=True,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    email = forms.EmailField(required=True,
+                             widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Your Email'}))
+    message = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Your Message'}),
+                              required=True)
 
 
 class PickupRequestForm(forms.ModelForm):

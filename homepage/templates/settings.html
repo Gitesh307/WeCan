@@ -17,7 +17,7 @@ My Account Information
                         <th style="vertical-align: middle;">Profile Picture:</th>
                         <td>
                             {% if subscriber_form.instance.profile_picture %}
-                                =<img src="{{ subscriber_form.instance.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+                                <img src="{{ subscriber_form.instance.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
                             {% else %}
                                 <p>No profile picture uploaded</p>
                             {% endif %}

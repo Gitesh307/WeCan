@@ -137,7 +137,10 @@ LOGIN_REDIRECT_URL = '/profile/'
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wecan_app.settings')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+MEDIA_URL = '/media/'  # URL for accessing media files in templates
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

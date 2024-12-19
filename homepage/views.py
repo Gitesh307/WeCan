@@ -53,7 +53,7 @@ def volunteers(request):
 
 def register(request):
    if request.method == 'POST':
-       form = UserRegistrationForm(request.POST)
+       form = UserRegistrationForm(request.POST, request.FILES)
        if form.is_valid():
            form.save()
            messages.success(request, f'Your account has been created. You can log in now!')   
