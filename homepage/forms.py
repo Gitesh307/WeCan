@@ -7,14 +7,27 @@ from django.core.exceptions import ValidationError
 from .models import PickupRequest
 
 
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+
 class SubscriberUpdateForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, required=False)
-    confirm_password = forms.CharField(widget=forms.PasswordInput, required=False)
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}),
+        required=False,
+        label="New Password"
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New Password'}),
+        required=False,
+        label="Confirm Password"
+    )
 
     class Meta:
         model = Subscriber
-        fields = ['fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state', 'zip_code', 'payment_method',
-                  'profile_picture']
+        fields = [
+            'fname', 'lname', 'email', 'phone', 'street_address', 'city', 'state',
+            'zip_code', 'payment_method', 'profile_picture'
+        ]
         widgets = {
             'state': forms.Select(choices=[(state, state) for state in [
                 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY',
@@ -37,8 +50,7 @@ class SubscriberUpdateForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if Subscriber.objects.filter(email=email).exclude(account_id=self.instance.account_id).exists():
-            raise (forms.ValidationError
-                   ("This email is already registered."))
+            raise forms.ValidationError("This email is already registered.")
         return email
 
     def clean(self):
@@ -46,8 +58,15 @@ class SubscriberUpdateForm(forms.ModelForm):
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
 
-        if password and password != confirm_password:
-            raise ValidationError("Passwords do not match")
+        if password:
+            try:
+                validate_password(password, user=self.instance.linked_account)
+            except ValidationError as e:
+                self.add_error('password', e)
+            
+            if password != confirm_password:
+                self.add_error('confirm_password', "Passwords do not match.")
+
         return cleaned_data
 
 

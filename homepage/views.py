@@ -8,6 +8,8 @@ from .forms import ContactForm
 from .models import ContactSubmission
 from .models import PickupRequest
 from .forms import PickupRequestForm
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 
@@ -118,49 +120,45 @@ def request_pickup(request):
 def pickuphistory(request):
     return render(request, 'pickuphistory.html') 
 
+
+@login_required
 def settings(request):
-    # Fetch the subscriber for the logged-in user
     subscriber = Subscriber.objects.filter(account_id=request.user.id).first()
     if not subscriber:
-        # Redirect to an error page if the subscriber profile is missing
         return render(request, "error.html", {"message": "No profile found!"})
 
     if request.method == 'POST':
-        # Bind the submitted data to the form
         subscriber_form = SubscriberUpdateForm(request.POST, request.FILES, instance=subscriber)
 
         if subscriber_form.is_valid():
-            # Save the subscriber updates
             updated_subscriber = subscriber_form.save(commit=False)
 
-            # Update password if provided
             password = subscriber_form.cleaned_data.get('password')
             confirm_password = subscriber_form.cleaned_data.get('confirm_password')
 
             if password:
                 if password == confirm_password:
-                    # Use set_password to update the password properly
-                    updated_subscriber.linked_account.set_password(password)
+                    try:
+                        validate_password(password, user=subscriber.linked_account)
+                        subscriber.linked_account.set_password(password)
+                        subscriber.linked_account.save()
+                    except ValidationError as e:
+                        messages.error(request, f"Password error: {e}")
+                        return render(request, 'settings.html', {'subscriber_form': subscriber_form})
                 else:
                     messages.error(request, "Passwords do not match.")
                     return render(request, 'settings.html', {'subscriber_form': subscriber_form})
 
-            # Save changes to the database
             updated_subscriber.save()
-
             messages.success(request, "Your changes have been saved successfully!")
-            return redirect('settings')  # Redirect to the same page to prevent re-submission
+            return redirect('settings')
 
         else:
-            # Collect the first error and display it
-            latest_error = None
             for field, errors in subscriber_form.errors.items():
-                latest_error = f"{subscriber_form[field].label}: {errors[0]}"
+                messages.error(request, f"{field}: {errors[0]}")
                 break
-            messages.error(request, latest_error)
 
     else:
-        # Pre-fill the form with the current subscriber data
         subscriber_form = SubscriberUpdateForm(instance=subscriber)
 
     context = {
