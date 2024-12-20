@@ -18,6 +18,8 @@ We Can Project - Home
         <div class="text-center mt-5">
             <h1 class="display-3 font-weight-bold">We Can</h1>
             <p class="lead mb-4">Recycle Better with WeCan</p>
+            <p class="slogan">Donate. Recycle. Empower Communities.</p>
+        <p class="slogan">Give Back to the Planet and the People.</p>
             <div class="button-group">
                 <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg me-2 mb-5">Login</a>
                 <a href="{% url 'register' %}" class="btn btn-dark btn-lg mb-5">Get Started!</a>
@@ -131,6 +133,13 @@ We Can Project - Home
 {% block styles %}
 <style>
 
+    .slogan {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 10px;
+    font-style: italic;
+}
     .banner-message {
         background-color: #28a745; 
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
@@ -235,6 +244,8 @@ We Can Project - Home
         margin-bottom: 30px;
         transition: opacity 0.5s ease, transform 0.5s ease; /* Added */
     }
+
+
 
     .hero-section:hover h1,
     .hero-section:hover p {
