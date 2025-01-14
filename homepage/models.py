@@ -9,6 +9,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
+class Role(models.TextChoices):
+    SUBSCRIBER = 'Subscriber', 'Subscriber'
+    DRIVER = 'Driver', 'Driver'
+    REDEMPTION_WORKER = 'RedemptionCenterWorker', 'Redemption Center Worker'
+
 class Subscriber(models.Model):
     linked_account = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='subscriber_profile', null = True)
     account_id = models.AutoField(primary_key=True)
@@ -26,6 +31,26 @@ class Subscriber(models.Model):
 
     def __str__(self):
         return self.fname
+
+class Driver(models.Model):
+    linked_account = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver_profile')
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True, default='xyz@gmail.com')
+    phone = models.CharField(max_length=15, default='111-000-000')
+
+    def __str__(self):
+        return self.name
+
+class RedemptionWorker(models.Model):
+    linked_account = models.OneToOneField(User, on_delete=models.CASCADE, related_name='worker_profile')
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True, default='abc@gmail.com')
+    phone = models.CharField(max_length=15, default='000-000-000')
+
+    def __str__(self):
+        return self.name
+
+
 
 class RecyclingHistory(models.Model):
     subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE, related_name='recycling_history')

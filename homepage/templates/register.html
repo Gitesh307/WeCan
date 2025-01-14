@@ -8,25 +8,64 @@ Sign-Up
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; background-color: #f5f5f5; border-radius: 10px;">
         <h3 class="text-center mb-4">Create an Account</h3>
-        <form method="POST" enctype="multipart/form-data" action="">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'register' %}">
             {% csrf_token %}
-            {% for field in form %}
-            <div class="mb-3 row">
-                <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
-                <div class="col-sm-8">
-                    {{ field }}
-                    {% for error in field.errors %}
-                    <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
+            <div class="mb-3">
+                <label for="role" class="form-label">Select Role:</label>
+                <select id="role" name="role" class="form-select">
+                    <option value="Subscriber">Subscriber</option>
+                    <option value="Driver">Driver</option>
+                    <option value="RedemptionCenterWorker">Redemption Center Worker</option>
+                </select>
+            </div>
+
+            <!-- Subscriber Form -->
+            <div id="subscriber-form" style="display: none;">
+                {% for field in subscriber_form %}
+                <div class="mb-3 row">
+                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
+                    <div class="col-sm-8">
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
 
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary px-4">Register</button>
+            <!-- Driver Form -->
+            <div id="driver-form" style="display: none;">
+                {% for field in driver_form %}
+                <div class="mb-3 row">
+                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
+                    <div class="col-sm-8">
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
+
+            <!-- Redemption Center Worker Form -->
+            <div id="worker-form" style="display: none;">
+                {% for field in worker_form %}
+                <div class="mb-3 row">
+                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
+                    <div class="col-sm-8">
+                        {{ field }}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
         </form>
-
         <hr class="my-4">
 
         <div class="text-center">
@@ -35,6 +74,47 @@ Sign-Up
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('role').addEventListener('change', function () {
+        const role = this.value;
+
+        // Get all form sections
+        const subscriberForm = document.getElementById('subscriber-form');
+        const driverForm = document.getElementById('driver-form');
+        const workerForm = document.getElementById('worker-form');
+
+        // Hide all forms initially
+        subscriberForm.style.display = 'none';
+        driverForm.style.display = 'none';
+        workerForm.style.display = 'none';
+
+        // Disable inputs for all forms
+        disableFormInputs(subscriberForm, true);
+        disableFormInputs(driverForm, true);
+        disableFormInputs(workerForm, true);
+
+        // Show the selected form and enable its inputs
+        if (role === 'Subscriber') {
+            subscriberForm.style.display = 'block';
+            disableFormInputs(subscriberForm, false);
+        } else if (role === 'Driver') {
+            driverForm.style.display = 'block';
+            disableFormInputs(driverForm, false);
+        } else if (role === 'RedemptionCenterWorker') {
+            workerForm.style.display = 'block';
+            disableFormInputs(workerForm, false);
+        }
+    });
+
+    function disableFormInputs(form, disable) {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.disabled = disable;
+        });
+    }
+</script>
+
 
 <style>
     body {
@@ -66,5 +146,9 @@ Sign-Up
         padding: 0.375rem 0.75rem;
         width: 100%;
     }
+    .text-danger {
+        font-size: 0.875rem;
+    }
 </style>
 {% endblock %}
+

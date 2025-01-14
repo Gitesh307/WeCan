@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import UserRegistrationForm, SubscriberUpdateForm
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from .forms import SubscriberUpdateForm
+from .forms import UserRegistrationForm, DriverRegistrationForm, RedemptionWorkerRegistrationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Subscriber
+from .models import Subscriber, RecyclingHistory
 from .forms import ContactForm
-from .models import ContactSubmission
-from .models import PickupRequest
+from .models import ContactSubmission,Subscriber, PickupRequest
 from .forms import PickupRequestForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -51,23 +52,119 @@ def gallery(request):
     return render(request, 'gallery.html') 
 
 def volunteers(request):
-    return render(request, 'volunteers.html') 
+    return render(request, 'volunteers.html')
 
 def register(request):
-   if request.method == 'POST':
-       form = UserRegistrationForm(request.POST, request.FILES)
-       if form.is_valid():
-           form.save()
-           messages.success(request, f'Your account has been created. You can log in now!')   
-           return redirect('login')
-   else:
-       form = UserRegistrationForm()
-   context = {'form': form}
-   return render(request, 'register.html', context)
+    role = request.POST.get('role', None)
+    subscriber_form = UserRegistrationForm(request.POST or None, request.FILES or None)
+    driver_form = DriverRegistrationForm(request.POST or None)
+    worker_form = RedemptionWorkerRegistrationForm(request.POST or None)
+
+    if request.method == 'POST':
+        if role == 'Subscriber' and subscriber_form.is_valid():
+            subscriber_form.save()
+            messages.success(request, "Subscriber account created successfully!")
+            return redirect('login')
+
+        elif role == 'Driver' and driver_form.is_valid():
+            driver_form.save()
+            messages.success(request, "Driver account created successfully!")
+            return redirect('login')
+
+        elif role == 'RedemptionCenterWorker' and worker_form.is_valid():
+            worker_form.save()
+            messages.success(request, "Redemption Center Worker account created successfully!")
+            return redirect('login')
+
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+    return render(request, 'register.html', {
+        'subscriber_form': subscriber_form,
+        'driver_form': driver_form,
+        'worker_form': worker_form,
+    })
+
+
+def custom_login(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            # Check if the user is a Driver
+            if hasattr(user, 'driver_profile'):
+                login(request, user)
+                driver = user.driver_profile
+                return render(request, 'driver_dashboard.html', {'driver': driver})
+
+            # Check if the user is a Redemption Worker
+            elif hasattr(user, 'worker_profile'):
+                login(request, user)
+                return redirect('worker_dashboard')
+            else:
+                login(request, user)
+                return redirect('profile')  # Replace with subscriber dashboard URL
+
+        else:
+            # Invalid credentials
+            messages.error(request, "Invalid username or password. Please try again.")
+            return redirect('login')
+
+    return render(request, 'login.html', {'form': form})
+
+
 
 def login_view(request):
     form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
+
+@login_required
+def worker_dashboard(request):
+    if not hasattr(request.user, 'worker_profile'):
+        messages.error(request, "Access denied.")
+        return redirect('login')
+
+    worker = request.user.worker_profile
+    subscribers = Subscriber.objects.all()
+
+    if request.method == "POST":
+        print(f"POST data: {request.POST}")
+
+        subscriber_id = request.POST.get('subscriber_id')
+        items_recycled = request.POST.get('items_recycled')
+        points_earned = request.POST.get('points_earned')
+
+        # Validate inputs
+        if not subscriber_id or not items_recycled or not points_earned:
+            messages.error(request, "All fields are required.")
+            return redirect('worker_dashboard')
+
+        try:
+            items_recycled = int(items_recycled)
+            points_earned = float(points_earned)
+
+            # Fetch the subscriber and create recycling history
+            subscriber = get_object_or_404(Subscriber, account_id=subscriber_id)
+            RecyclingHistory.objects.create(
+                subscriber=subscriber,
+                items_recycled=items_recycled,
+                points_earned=points_earned,
+            )
+            messages.success(request, f"Updated recycling history for {subscriber.fname} {subscriber.lname}.")
+        except ValueError:
+            messages.error(request, "Invalid number format for items recycled or points earned.")
+        except Subscriber.DoesNotExist:
+            messages.error(request, "Subscriber not found.")
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+
+    return render(request, 'worker_dashboard.html', {'worker': worker, 'subscribers': subscribers})
+
 
 @login_required
 def profile(request):
@@ -78,6 +175,7 @@ def profile(request):
 
 
 def contact_view(request):
+
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():

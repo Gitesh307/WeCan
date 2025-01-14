@@ -2,15 +2,16 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Subscriber
-from django.core.exceptions import ValidationError
+from .models import Subscriber, Driver, RedemptionWorker
 from .models import PickupRequest
 
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
+
 class SubscriberUpdateForm(forms.ModelForm):
+
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}),
         required=False,
@@ -128,6 +129,52 @@ class UserRegistrationForm(UserCreationForm):
                 zip_code=self.cleaned_data['zip_code'],
                 payment_method=self.cleaned_data['payment_method'],
                 profile_picture=self.cleaned_data.get('profile_picture')
+            )
+        return user
+
+
+class DriverRegistrationForm(UserCreationForm):
+    name = forms.CharField(max_length=100, label="Name")
+    phone = forms.CharField(max_length=15, label="Phone Number")
+    email = forms.EmailField(label="Email Address")
+
+    class Meta:
+        model = User
+        fields = ['username', 'name', 'phone', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            # Create Driver instance
+            Driver.objects.create(
+                linked_account=user,
+                name=self.cleaned_data['name'],
+                phone=self.cleaned_data['phone'],
+                email=self.cleaned_data['email']
+            )
+        return user
+
+
+class RedemptionWorkerRegistrationForm(UserCreationForm):
+    name = forms.CharField(max_length=100, label="Name")
+    phone = forms.CharField(max_length=15, label="Phone Number")
+    email = forms.EmailField(label="Email Address")
+
+    class Meta:
+        model = User
+        fields = ['username', 'name', 'phone', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            # Create Redemption Center Worker instance
+            RedemptionWorker.objects.create(
+                linked_account=user,
+                name=self.cleaned_data['name'],
+                phone=self.cleaned_data['phone'],
+                email=self.cleaned_data['email']
             )
         return user
 

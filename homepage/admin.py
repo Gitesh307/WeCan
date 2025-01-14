@@ -1,8 +1,10 @@
 # Register your models here.
 from django.contrib import admin
 from .models import Subscriber, RecyclingHistory, AccountBalance, ContactSubmission
-from .models import PickupRequest
+from .models import PickupRequest, Driver, RedemptionWorker
 
+admin.site.register(Driver)
+admin.site.register(RedemptionWorker)
 admin.site.register(Subscriber)
 admin.site.register(RecyclingHistory)
 admin.site.register(AccountBalance)

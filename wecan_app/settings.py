@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ SECRET_KEY = "django-insecure-ihh$9lpro)$o)kg$wl^7bfl=(7^md$6f0dl2&p=6ey*p4+%(i2
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "wecan-4520.onrender.com"]
-
 
 # Application definition
 
@@ -72,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "wecan_app.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -82,7 +79,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -102,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -113,7 +108,6 @@ TIME_ZONE = "America/New_York"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -135,7 +129,6 @@ LOGIN_URL = '/login/'
 # added manually
 LOGIN_REDIRECT_URL = '/profile/'
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wecan_app.settings')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -146,7 +139,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'wecanmass@gmail.com'  
-EMAIL_HOST_PASSWORD = 'ofoq tqof phye uxhe'  
-DEFAULT_FROM_EMAIL = 'noreply@wecanmass.org' 
+EMAIL_HOST_USER = 'wecanmass@gmail.com'
+EMAIL_HOST_PASSWORD = 'ofoq tqof phye uxhe'
+DEFAULT_FROM_EMAIL = 'noreply@wecanmass.org'
 
