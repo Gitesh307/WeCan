@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}We Can Project - Worker Dashboard{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container">
+        <div class="header">
+            <h2>Welcome, {{ worker.name }}</h2>
+        </div>
+        <div class="profile-section">
+            <h4>Profile Information</h4>
+            <p><strong>Worker ID:</strong> {{ worker.id }}</p>
+            <p><strong>Email:</strong> {{ worker.email }}</p>
+            <p><strong>Phone:</strong> {{ worker.phone }}</p>
+        </div>
+        <div class="update-section">
+    <h4>Update Recycling History</h4>
+    <form method="POST" class="update-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="subscriber_id">Subscriber Name:</label>
+            <select name="subscriber_id" id="subscriber_id" required>
+                {% for subscriber in subscribers %}
+                <option value="{{ subscriber.account_id }}">{{ subscriber.fname }} {{ subscriber.lname }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="items_recycled">Items Recycled:</label>
+            <input type="number" name="items_recycled" id="items_recycled" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="points_earned">Points Earned:</label>
+            <input type="number" name="points_earned" id="points_earned" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn-submit">Update</button>
+        </div>
+    </form>
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<style>
+    /* Reuse the same CSS from subscriber profile */
+    .profile-page .container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .profile-page .header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    .profile-page .profile-section,
+    .profile-page .update-section {
+        padding: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    .profile-page .profile-section:last-child {
+        border-bottom: none;
+    }
+    .profile-page h1, .profile-page h2 {
+        margin: 0 0 15px;
+    }
+    .profile-page p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+    .update-section {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f9f9f9;
+        margin-top: 20px;
+    }
+
+    .update-section h4 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .update-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .update-form .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .update-form label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .update-form select,
+    .update-form input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .update-form .btn-submit {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        max-width: 150px;
+    }
+
+    .update-form .btn-submit:hover {
+        background-color: #45a049;
+    }
+
+    .update-form input:focus,
+    .update-form select:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+</style>
+{% endblock %}

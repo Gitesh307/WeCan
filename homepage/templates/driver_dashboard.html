@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}We Can Project - Driver Dashboard{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container">
+        <div class="header">
+            <h2>Welcome, {{ driver.name }}</h2>
+        </div>
+        <div class="profile-section">
+            <h4>Driver Information</h4>
+            <p><strong>License Number:</strong> {{ driver.license_number }}</p>
+            <p><strong>Vehicle Type:</strong> {{ driver.vehicle_type }}</p>
+            <p><strong>Phone:</strong> {{ driver.phone }}</p>
+            <p><strong>Email:</strong> {{ driver.email }}</p>
+        </div>
+    </div>
+</div>
+<style>
+    /* Reuse the same CSS from subscriber profile */
+    .profile-page .container {
+        max-width: 800px;
+        margin: 30px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .profile-page .header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    .profile-page .profile-section {
+        padding: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    .profile-page h1, .profile-page h2 {
+        margin: 0 0 15px;
+    }
+    .profile-page p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
