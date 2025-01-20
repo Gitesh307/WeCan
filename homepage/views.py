@@ -1,16 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from qrcode import QRCode
 from .forms import SubscriberUpdateForm
 from .forms import UserRegistrationForm, DriverRegistrationForm, RedemptionWorkerRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Subscriber, RecyclingHistory
+from .models import AccountBalance, Subscriber, RecyclingHistory
 from .forms import ContactForm
 from .models import ContactSubmission,Subscriber, PickupRequest
 from .forms import PickupRequestForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from .models import QRCode
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from random import randint
+from django.db.models import Sum
 
 # Create your views here.
 
@@ -96,22 +103,19 @@ def custom_login(request):
         user = authenticate(username=username, password=password)
 
         if user:
-            # Check if the user is a Driver
             if hasattr(user, 'driver_profile'):
                 login(request, user)
-                driver = user.driver_profile
-                return render(request, 'driver_dashboard.html', {'driver': driver})
+                return redirect('driver_dashboard')  
 
-            # Check if the user is a Redemption Worker
             elif hasattr(user, 'worker_profile'):
                 login(request, user)
-                return redirect('worker_dashboard')
+                return redirect('worker_dashboard')  
+
             else:
                 login(request, user)
-                return redirect('profile')  # Replace with subscriber dashboard URL
+                return redirect('profile') 
 
         else:
-            # Invalid credentials
             messages.error(request, "Invalid username or password. Please try again.")
             return redirect('login')
 
@@ -130,56 +134,156 @@ def worker_dashboard(request):
         return redirect('login')
 
     worker = request.user.worker_profile
-    subscribers = Subscriber.objects.all()
+    scanned_bags = request.session.get('scanned_bags', [])
+    total_points = request.session.get('total_points', 0)
+    pickup_request = None
 
     if request.method == "POST":
-        print(f"POST data: {request.POST}")
+        bag_id = request.POST.get("bag_id")
+        action = request.POST.get("action")
 
-        subscriber_id = request.POST.get('subscriber_id')
-        items_recycled = request.POST.get('items_recycled')
-        points_earned = request.POST.get('points_earned')
+        print(f"INFO: Action received: {action}")
 
-        # Validate inputs
-        if not subscriber_id or not items_recycled or not points_earned:
-            messages.error(request, "All fields are required.")
-            return redirect('worker_dashboard')
+        if action == "scan_bag":
+            if not bag_id:
+                print("ERROR: No Bag ID provided for scanning.")
+                messages.error(request, "Please provide a valid Bag ID.")
+                return redirect('worker_dashboard')
 
-        try:
-            items_recycled = int(items_recycled)
-            points_earned = float(points_earned)
+            try:
+                pickup_request = PickupRequest.objects.get(
+                    user__subscriber_profile__qr_codes__id=bag_id,
+                    status="Picked Up"
+                )
+                print(f"INFO: Pickup request found for Bag ID {bag_id}: {pickup_request}")
+            except PickupRequest.DoesNotExist:
+                print(f"ERROR: No active pickup request found for Bag ID {bag_id}.")
+                messages.error(request, f"No active pickup request found for Bag ID {bag_id}.")
+                return redirect('worker_dashboard')
 
-            # Fetch the subscriber and create recycling history
-            subscriber = get_object_or_404(Subscriber, account_id=subscriber_id)
-            RecyclingHistory.objects.create(
-                subscriber=subscriber,
-                items_recycled=items_recycled,
-                points_earned=points_earned,
-            )
-            messages.success(request, f"Updated recycling history for {subscriber.fname} {subscriber.lname}.")
-        except ValueError:
-            messages.error(request, "Invalid number format for items recycled or points earned.")
-        except Subscriber.DoesNotExist:
-            messages.error(request, "Subscriber not found.")
-        except Exception as e:
-            messages.error(request, f"An error occurred: {e}")
+            if len(scanned_bags) < pickup_request.num_bags:
+                print(f"INFO: Scanning bag for pickup request: {pickup_request}")
+                num_items = randint(10, 50)  
+                points = round(num_items * 0.0322, 2)  
 
-    return render(request, 'worker_dashboard.html', {'worker': worker, 'subscribers': subscribers})
+                scanned_bags.append({
+                    "bag_id": bag_id,
+                    "bag_number": len(scanned_bags) + 1,
+                    "num_items": num_items,
+                    "points": points,
+                })
+                total_points += points
+
+                pickup_request.scanned_bag_count = len(scanned_bags)
+                pickup_request._updated_by_worker = True  
+                pickup_request.save()
+
+                request.session['scanned_bags'] = scanned_bags
+                request.session['total_points'] = total_points
+
+                print(f"INFO: Bag scanned successfully. Total scanned: {len(scanned_bags)}")
+                messages.success(
+                    request,
+                    f"Bag {len(scanned_bags)} scanned: {num_items} items, {points} points.",
+                )
+            else:
+                print("ERROR: All bags for this pickup request have already been scanned.")
+                messages.error(request, "All bags for this pickup request have already been scanned.")
+
+        elif action == "finalize":
+            print("DEBUG: Finalize action triggered.")
+            try:
+                if scanned_bags:
+                    bag_id = scanned_bags[0]["bag_id"]
+                    pickup_request = PickupRequest.objects.get(
+                        user__subscriber_profile__qr_codes__id=bag_id,
+                        status="Picked Up"
+                    )
+                    print(f"INFO: Pickup request fetched for finalize: {pickup_request}")
+                else:
+                    raise ValueError("Scanned bags session is empty.")
+            except PickupRequest.DoesNotExist:
+                print(f"ERROR: No active pickup request found for Bag ID {bag_id}.")
+                messages.error(request, "Failed to fetch the pickup request. Please try again.")
+                return redirect('worker_dashboard')
+            except Exception as e:
+                print(f"ERROR: Unexpected error: {str(e)}")
+                messages.error(request, "An unexpected error occurred.")
+                return redirect('worker_dashboard')
+
+            if len(scanned_bags) == pickup_request.num_bags:
+                items_recycled = sum(bag['num_items'] for bag in scanned_bags)
+                try:
+                    RecyclingHistory.objects.create(
+                        subscriber=pickup_request.user.subscriber_profile,
+                        items_recycled=items_recycled,
+                        points_earned=total_points,
+                    )
+                    print(f"INFO: Recycling history created for {pickup_request.user.subscriber_profile}")
+                except Exception as e:
+                    print(f"ERROR: Failed to create recycling history: {str(e)}")
+                    messages.error(request, "Failed to save recycling history. Please try again.")
+                    return redirect('worker_dashboard')
+
+                pickup_request.status = "Completed"
+                pickup_request.save()
+
+                updated_pickup_request = PickupRequest.objects.get(pk=pickup_request.pk)
+                if updated_pickup_request.status == "Completed":
+                    print("INFO: Pickup request status successfully updated to 'Completed'.")
+                    messages.success(
+                        request,
+                        "Pickup request finalized. Rewards have been added to the subscriber's account, and the status is updated to 'Completed'.",
+                    )
+                else:
+                    print("ERROR: Pickup request status update failed.")
+                    messages.error(
+                        request,
+                        "Pickup request could not be marked as 'Completed'. Please try again.",
+                    )
+
+                request.session.pop('scanned_bags', None)
+                request.session.pop('total_points', None)
+
+                return redirect('worker_dashboard')
+            else:
+                print(f"ERROR: Not all bags have been scanned. Scanned: {len(scanned_bags)}, Total: {pickup_request.num_bags}")
+                messages.error(request, "Please scan all bags before finalizing.")
+
+    return render(request, 'worker_dashboard.html', {
+        'worker': worker,
+        'pickup_request': pickup_request,
+        'scanned_bags': scanned_bags,
+        'total_points': total_points,
+    })
+
 
 
 @login_required
 def profile(request):
-    # Get the Subscriber instance related to the logged-in user
     subscriber = get_object_or_404(Subscriber, account_id=request.user.id)
-    subscriber.refresh_from_db()  # Fetch the latest data from the database
-    return render(request, 'profile.html', {'subscriber': subscriber}) 
 
+    subscriber.refresh_from_db()
+
+    total_points = subscriber.recycling_history.aggregate(
+        total_points=Sum('points_earned')
+    )['total_points'] or 0  
+
+    if hasattr(subscriber, 'account_balance'):
+        subscriber.account_balance.balance = round(total_points, 2)
+        subscriber.account_balance.save()
+    else:
+        subscriber.account_balance = AccountBalance.objects.create(
+            subscriber=subscriber, balance=round(total_points, 2)
+        )
+
+    return render(request, 'profile.html', {'subscriber': subscriber})
 
 def contact_view(request):
 
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Save to database
             ContactSubmission.objects.create(
                 first_name=form.cleaned_data['first_name'],
                 last_name=form.cleaned_data['last_name'],
@@ -198,21 +302,34 @@ def contact_success_view(request):
 @login_required
 def request_pickup(request):
     user = request.user
-    pickup_request = PickupRequest.objects.filter(user=user).last()
+    pickup_request = PickupRequest.objects.filter(user=user).order_by('-created_at').first()
+
+    if pickup_request and pickup_request.status != "Completed":
+        return render(request, 'request.html', {
+            'pickup_request': pickup_request,
+            'form': None,  
+            'error_message': "You cannot submit a new pickup request until your current request is completed.",
+        })
 
     if request.method == "POST":
         form = PickupRequestForm(request.POST)
         if form.is_valid():
             ready_for_pickup = form.cleaned_data['ready_for_pickup']
-            pickup_request = PickupRequest.objects.create(
+            num_bags = form.cleaned_data['num_bags']
+
+            PickupRequest.objects.create(
                 user=user,
                 ready_for_pickup=ready_for_pickup,
+                num_bags=num_bags,
                 status="Pending"
             )
+            messages.success(request, "Your pickup request has been submitted successfully!")
             return redirect('request_pickup')
 
+    form = PickupRequestForm()
     return render(request, 'request.html', {
-        'pickup_request': pickup_request
+        'pickup_request': pickup_request,
+        'form': form,
     })
 
 def pickuphistory(request):
@@ -263,3 +380,60 @@ def settings(request):
         'subscriber_form': subscriber_form,
     }
     return render(request, 'settings.html', context)
+
+@login_required
+def driver_dashboard(request):
+    if not hasattr(request.user, 'driver_profile'):
+        messages.error(request, "Access denied.")
+        return redirect('login')
+
+    driver = request.user.driver_profile
+    pickup_requests = PickupRequest.objects.filter(status='Accepted')
+    scanned_bag_count = 0
+    num_bags = 0
+    selected_pickup_request = None
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = data.get("action")
+        pickup_request_id = data.get("pickup_request_id")
+
+        try:
+            pickup_request = PickupRequest.objects.get(pk=pickup_request_id)
+
+            if action == "add_bag":
+                if pickup_request.scanned_bag_count < pickup_request.num_bags:
+                    pickup_request.scanned_bag_count += 1
+                    pickup_request.save()
+                    return JsonResponse({"success": True, "message": f"Bag {pickup_request.scanned_bag_count} added!"})
+                else:
+                    return JsonResponse({"success": False, "message": "All bags already scanned!"})
+
+            elif action == "mark_picked_up":
+                if pickup_request.scanned_bag_count == pickup_request.num_bags:
+                    pickup_request.status = "Picked Up"
+                    pickup_request.save()
+                    return JsonResponse({"success": True, "message": "Pickup request marked as Picked Up!"})
+                else:
+                    return JsonResponse({"success": False, "message": "Not all bags have been scanned!"})
+
+        except PickupRequest.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Invalid Pickup Request!"})
+
+    pickup_request_id = request.GET.get("pickup_request_id")
+    if pickup_request_id:
+        try:
+            selected_pickup_request = PickupRequest.objects.get(pk=pickup_request_id)
+            scanned_bag_count = selected_pickup_request.scanned_bag_count
+            num_bags = selected_pickup_request.num_bags
+        except PickupRequest.DoesNotExist:
+            pass
+
+    context = {
+        "driver": driver,
+        "pickup_requests": pickup_requests,
+        "scanned_bag_count": scanned_bag_count,
+        "num_bags": num_bags,
+        "selected_pickup_request": selected_pickup_request,
+    }
+    return render(request, "driver_dashboard.html", context)

@@ -1,49 +1,241 @@
-{% extends 'base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+        }
 
-{% block title %}We Can Project - Driver Dashboard{% endblock %}
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
 
-{% block content %}
-<div class="profile-page">
+        h1, h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 15px;
+            border-left: 5px solid #4CAF50;
+            padding-left: 10px;
+            font-size: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"], select, button {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .summary {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .scanned-bags ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .scanned-bags ul li {
+            margin: 10px 0;
+            background: #f4f6f9;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scanned-bags ul li span {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-buttons button {
+            min-width: 200px;
+        }
+    </style>
+    <script>
+        async function addBag() {
+            const qrCodeId = document.getElementById('qr_code_id').value;
+            const pickupRequestId = document.getElementById('pickup_request_id').value;
+
+            const response = await fetch("", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "add_bag",
+                    qr_code_id: qrCodeId,
+                    pickup_request_id: pickupRequestId
+                })
+            });
+            const data = await response.json();
+            alert(data.message);
+            if (data.success) {
+                location.reload(); 
+            }
+        }
+
+        async function markPickedUp() {
+            const pickupRequestId = document.getElementById('pickup_request_id').value;
+
+            const response = await fetch("", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "mark_picked_up",
+                    pickup_request_id: pickupRequestId
+                })
+            });
+            const data = await response.json();
+            alert(data.message);
+            if (data.success) {
+                location.reload();
+            }
+        }
+    </script>
+</head>
+<body>
     <div class="container">
-        <div class="header">
-            <h2>Welcome, {{ driver.name }}</h2>
-        </div>
-        <div class="profile-section">
-            <h4>Driver Information</h4>
-            <p><strong>License Number:</strong> {{ driver.license_number }}</p>
-            <p><strong>Vehicle Type:</strong> {{ driver.vehicle_type }}</p>
-            <p><strong>Phone:</strong> {{ driver.phone }}</p>
+        <h1>Driver Dashboard</h1>
+        
+        <div class="summary">
+            <p><strong>Name:</strong> {{ driver.name }}</p>
             <p><strong>Email:</strong> {{ driver.email }}</p>
+            <p><strong>Phone:</strong> {{ driver.phone }}</p>
         </div>
+
+        <h3>Pickup Requests</h3>
+        <div class="form-group">
+            <label for="pickup_request_id">Select Pickup Request:</label>
+            <select id="pickup_request_id" name="pickup_request_id" onchange="location.href='?pickup_request_id=' + this.value;">
+                <option value="" disabled selected>--- Select Request ---</option>
+                {% for request in pickup_requests %}
+                    <option value="{{ request.id }}" {% if selected_pickup_request and selected_pickup_request.id == request.id %}selected{% endif %}>
+                        {{ request.user.username }} - {{ request.status }}
+                    </option>
+                {% empty %}
+                    <option disabled>No requests available</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if selected_pickup_request %}
+            <h3>Scan/Add Bag</h3>
+            <form onsubmit="event.preventDefault(); addBag();">
+                <div class="form-group">
+                    <label for="qr_code_id">QR Code ID:</label>
+                    <input type="text" id="qr_code_id" value="{{ selected_pickup_request.user.subscriber_profile.qr_codes.first.id }}" disabled>
+                </div>
+                <button type="submit">Add Bag</button>
+            </form>
+
+            <h3>Scanned Bags</h3>
+            <div class="summary">
+                <p>{{ scanned_bag_count }} of {{ num_bags }} bags scanned.</p>
+            </div>
+
+            <h3>Mark All as Picked Up</h3>
+            <div class="action-buttons">
+                <form onsubmit="event.preventDefault(); markPickedUp();">
+                    <button type="submit" {% if scanned_bag_count != num_bags %}disabled{% endif %}>
+                        Mark as Picked Up
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <p class="no-data">Please select a pickup request to begin scanning bags.</p>
+        {% endif %}
     </div>
-</div>
-<style>
-    /* Reuse the same CSS from subscriber profile */
-    .profile-page .container {
-        max-width: 800px;
-        margin: 30px auto;
-        background: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-    .profile-page .header {
-        background-color: #4CAF50;
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
-    .profile-page .profile-section {
-        padding: 20px;
-        border-bottom: 1px solid #ddd;
-    }
-    .profile-page h1, .profile-page h2 {
-        margin: 0 0 15px;
-    }
-    .profile-page p {
-        margin: 10px 0;
-        line-height: 1.6;
-    }
-</style>
-{% endblock %}
+</body>
+</html>

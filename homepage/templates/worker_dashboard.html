@@ -1,146 +1,192 @@
-{% extends 'base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+        }
 
-{% block title %}We Can Project - Worker Dashboard{% endblock %}
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
 
-{% block content %}
-<div class="profile-page">
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h4 {
+            color: #4CAF50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-left: 5px solid #4CAF50;
+            padding-left: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .summary {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+            background: #f4f6f9;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul li span {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .finalize-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .finalize-section button {
+            width: auto;
+            min-width: 200px;
+            padding: 12px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-        <div class="header">
-            <h2>Welcome, {{ worker.name }}</h2>
-        </div>
-        <div class="profile-section">
-            <h4>Profile Information</h4>
-            <p><strong>Worker ID:</strong> {{ worker.id }}</p>
-            <p><strong>Email:</strong> {{ worker.email }}</p>
-            <p><strong>Phone:</strong> {{ worker.phone }}</p>
-        </div>
-        <div class="update-section">
-    <h4>Update Recycling History</h4>
-    <form method="POST" class="update-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="subscriber_id">Subscriber Name:</label>
-            <select name="subscriber_id" id="subscriber_id" required>
-                {% for subscriber in subscribers %}
-                <option value="{{ subscriber.account_id }}">{{ subscriber.fname }} {{ subscriber.lname }}</option>
-                {% endfor %}
-            </select>
-        </div>
+        <h2>Worker Dashboard</h2>
+        
+        <h4>Scan and Process Bags</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="bag_id">Scan Bag (Enter Bag ID):</label>
+                <input type="text" name="bag_id" id="bag_id" placeholder="Enter Bag ID" required>
+            </div>
+            <button type="submit" name="action" value="scan_bag">Scan Bag</button>
+        </form>
 
-        <div class="form-group">
-            <label for="items_recycled">Items Recycled:</label>
-            <input type="number" name="items_recycled" id="items_recycled" min="0" required>
-        </div>
+        <h4>Pickup Request Details</h4>
+        {% if pickup_request %}
+            <div class="summary">
+                <p><strong>Subscriber:</strong> {{ pickup_request.user.first_name }} {{ pickup_request.user.last_name }}</p>
+                <p><strong>Total Bags:</strong> {{ pickup_request.num_bags }}</p>
+                <p><strong>Bags Scanned:</strong> {{ pickup_request.scanned_bag_count }}</p>
+            </div>
+        {% else %}
+            <p class="no-data">No pickup request found for the entered Bag ID.</p>
+        {% endif %}
 
-        <div class="form-group">
-            <label for="points_earned">Points Earned:</label>
-            <input type="number" name="points_earned" id="points_earned" step="0.01" required>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" class="btn-submit">Update</button>
-        </div>
-    </form>
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+        <h4>Scanned Bags</h4>
+        <ul>
+            {% for bag in scanned_bags %}
+                <li>
+                    <span>Bag {{ bag.bag_number }}</span>
+                    <span>{{ bag.num_items }} items</span>
+                    <span>{{ bag.points }} points</span>
+                </li>
+            {% empty %}
+                <p class="no-data">No bags scanned yet.</p>
             {% endfor %}
+        </ul>
+
+        <div class="summary">
+            <p><strong>Total Points Earned:</strong> {{ total_points }}</p>
         </div>
+
+        {% if pickup_request and scanned_bags|length == pickup_request.num_bags %}
+            <div class="finalize-section">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="finalize">Finalize Pickup Request</button>
+                </form>
+            </div>
+        {% endif %}
     </div>
-</div>
-<style>
-    /* Reuse the same CSS from subscriber profile */
-    .profile-page .container {
-        max-width: 800px;
-        margin: 30px auto;
-        background: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-    .profile-page .header {
-        background-color: #4CAF50;
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
-    .profile-page .profile-section,
-    .profile-page .update-section {
-        padding: 20px;
-        border-bottom: 1px solid #ddd;
-    }
-    .profile-page .profile-section:last-child {
-        border-bottom: none;
-    }
-    .profile-page h1, .profile-page h2 {
-        margin: 0 0 15px;
-    }
-    .profile-page p {
-        margin: 10px 0;
-        line-height: 1.6;
-    }
-    .update-section {
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background: #f9f9f9;
-        margin-top: 20px;
-    }
-
-    .update-section h4 {
-        margin-bottom: 15px;
-        font-size: 18px;
-        color: #333;
-    }
-
-    .update-form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .update-form .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .update-form label {
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #555;
-    }
-
-    .update-form select,
-    .update-form input {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .update-form .btn-submit {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        max-width: 150px;
-    }
-
-    .update-form .btn-submit:hover {
-        background-color: #45a049;
-    }
-
-    .update-form input:focus,
-    .update-form select:focus {
-        outline: none;
-        border-color: #4CAF50;
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-    }
-</style>
-{% endblock %}
+</body>
+</html>

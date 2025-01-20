@@ -7,6 +7,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
+import qrcode
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 class Role(models.TextChoices):
@@ -21,16 +24,37 @@ class Subscriber(models.Model):
     lname = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
-    street_address = models.CharField(max_length=255, default="")  # Default empty string
-    city = models.CharField(max_length=100, default="")  # Default empty string
-    state = models.CharField(max_length=2, default="NA")  # Default to "NA"
-    zip_code = models.CharField(max_length=10, default="00000")  # Default value
-    payment_method = models.CharField(max_length=10, default="paypal")  # Default to "paypal"
+    street_address = models.CharField(max_length=255, default="")  
+    city = models.CharField(max_length=100, default="")  
+    state = models.CharField(max_length=2, default="NA")  
+    zip_code = models.CharField(max_length=10, default="00000")  
+    payment_method = models.CharField(max_length=10, default="paypal")  
     created_at = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return self.fname
+    
+class QRCode(models.Model):
+    subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE, related_name='qr_codes')
+    qr_image = models.ImageField(upload_to='qr_codes/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.qr_image:
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(f'{self.subscriber.email}-{self.pk}')  
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            self.qr_image.save(f'{self.subscriber.fname}_qr_{self.pk}.png', ContentFile(buffer.getvalue()), save=False)
+        super().save(*args, **kwargs)
 
 class Driver(models.Model):
     linked_account = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver_profile')
@@ -55,7 +79,7 @@ class RedemptionWorker(models.Model):
 class RecyclingHistory(models.Model):
     subscriber = models.ForeignKey(Subscriber, on_delete=models.CASCADE, related_name='recycling_history')
     date = models.DateTimeField(auto_now_add=True)
-    items_recycled = models.IntegerField()  # e.g., number of cans/bottles recycled
+    items_recycled = models.IntegerField()  
     points_earned = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
@@ -83,35 +107,29 @@ class PickupRequest(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
-        ('Picked Up', 'Picked Up'),  
-        ('Completed', 'Completed'),  
+        ('Picked Up', 'Picked Up'),
+        ('Completed', 'Completed'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ready_for_pickup = models.BooleanField(default=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    scanned_bag_count = models.PositiveIntegerField(default=0)  
+    num_bags = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        if self.pk:
-            original_status = PickupRequest.objects.get(pk=self.pk).status
-            if original_status != self.status and self.status == "Completed":
-                self.add_to_recycling_history()
+
         super(PickupRequest, self).save(*args, **kwargs)
 
-    def add_to_recycling_history(self):
-        try:
-            subscriber = Subscriber.objects.get(email=self.user.email)
-        except Subscriber.DoesNotExist:
-            raise ValueError(f"No Subscriber found for user with email: {self.user.email}")
-        items_recycled = 10  
-        points_earned = items_recycled * 0.5  
-
-        RecyclingHistory.objects.create(
-            subscriber=subscriber,
-            items_recycled=items_recycled,
-            points_earned=points_earned
-        )
+   
 
     def __str__(self):
         return f"Pickup Request by {self.user.username} - {self.status}"
+
+    def calculate_points(self, num_items):
+        """
+        Calculate the points for the given number of items in a bag.
+        Each item is worth 3.22 cents.
+        """
+        return round(num_items * 0.0322, 2)  

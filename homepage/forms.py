@@ -115,7 +115,6 @@ class UserRegistrationForm(UserCreationForm):
 
         if commit:
             user.save()
-            # Create Subscriber instance
             Subscriber.objects.create(
                 linked_account=user,
                 account_id=user.id,
@@ -146,7 +145,6 @@ class DriverRegistrationForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            # Create Driver instance
             Driver.objects.create(
                 linked_account=user,
                 name=self.cleaned_data['name'],
@@ -169,7 +167,6 @@ class RedemptionWorkerRegistrationForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            # Create Redemption Center Worker instance
             RedemptionWorker.objects.create(
                 linked_account=user,
                 name=self.cleaned_data['name'],
@@ -193,7 +190,8 @@ class ContactForm(forms.Form):
 class PickupRequestForm(forms.ModelForm):
     class Meta:
         model = PickupRequest
-        fields = ['ready_for_pickup']
+        fields = ['ready_for_pickup', 'num_bags']  
         widgets = {
-            'ready_for_pickup': forms.Select(choices=[(True, 'Yes'), (False, 'No')])
+            'ready_for_pickup': forms.Select(choices=[(True, 'Yes'), (False, 'No')]),
+            'num_bags': forms.NumberInput(attrs={'min': 0}),  
         }

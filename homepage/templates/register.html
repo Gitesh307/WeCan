@@ -13,13 +13,13 @@ Sign-Up
             <div class="mb-3">
                 <label for="role" class="form-label">Select Role:</label>
                 <select id="role" name="role" class="form-select">
+                    <option>-----</option>
                     <option value="Subscriber">Subscriber</option>
                     <option value="Driver">Driver</option>
                     <option value="RedemptionCenterWorker">Redemption Center Worker</option>
                 </select>
             </div>
 
-            <!-- Subscriber Form -->
             <div id="subscriber-form" style="display: none;">
                 {% for field in subscriber_form %}
                 <div class="mb-3 row">
@@ -34,7 +34,6 @@ Sign-Up
                 {% endfor %}
             </div>
 
-            <!-- Driver Form -->
             <div id="driver-form" style="display: none;">
                 {% for field in driver_form %}
                 <div class="mb-3 row">
@@ -49,7 +48,6 @@ Sign-Up
                 {% endfor %}
             </div>
 
-            <!-- Redemption Center Worker Form -->
             <div id="worker-form" style="display: none;">
                 {% for field in worker_form %}
                 <div class="mb-3 row">
@@ -79,22 +77,18 @@ Sign-Up
     document.getElementById('role').addEventListener('change', function () {
         const role = this.value;
 
-        // Get all form sections
         const subscriberForm = document.getElementById('subscriber-form');
         const driverForm = document.getElementById('driver-form');
         const workerForm = document.getElementById('worker-form');
 
-        // Hide all forms initially
         subscriberForm.style.display = 'none';
         driverForm.style.display = 'none';
         workerForm.style.display = 'none';
 
-        // Disable inputs for all forms
         disableFormInputs(subscriberForm, true);
         disableFormInputs(driverForm, true);
         disableFormInputs(workerForm, true);
 
-        // Show the selected form and enable its inputs
         if (role === 'Subscriber') {
             subscriberForm.style.display = 'block';
             disableFormInputs(subscriberForm, false);

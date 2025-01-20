@@ -13,19 +13,17 @@
                 <form method="post" action="{% url 'request_pickup' %}">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="ready_for_pickup" class="form-label">
-                            Are you ready for your bin to be picked up?
-                        </label>
-                        <select class="form-select" id="ready_for_pickup" name="ready_for_pickup" required>
-                            <option value="">Select an option</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
+                        <label for="ready_for_pickup" class="form-label">Are you ready for your bin to be picked up?</label>
+                        {{ form.ready_for_pickup }}
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="num_bags" class="form-label">How many bags do you need to be picked up?</label>
+                        {{ form.num_bags }}
+                    </div>
+                
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-success">
-                            Submit Request
-                        </button>
+                        <button type="submit" class="btn btn-success">Submit Request</button>
                     </div>
                 </form>
             </div>
