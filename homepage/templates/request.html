@@ -1,67 +1,457 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Request A Pickup | We Can Project
+Request Pickup - WeCan
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="p-4 rounded shadow-sm bg-white">
-                <h2 class="mb-4 text-center">Request A Pickup</h2>
-                <form method="post" action="{% url 'request_pickup' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="ready_for_pickup" class="form-label">Are you ready for your bin to be picked up?</label>
-                        {{ form.ready_for_pickup }}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="num_bags" class="form-label">How many bags do you need to be picked up?</label>
-                        {{ form.num_bags }}
-                    </div>
-                
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success">Submit Request</button>
-                    </div>
-                </form>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Page Header -->
+      <div class="text-center mb-5" data-aos="fade-up">
+        <div class="page-icon mb-3">
+          <i class="bi bi-calendar-plus"></i>
+        </div>
+        <h1 class="h2 fw-bold mb-3">Request a Pickup</h1>
+        <p class="lead text-secondary-600">Schedule a convenient time for us to collect your recyclables</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Pickup Request Form -->
+        <div class="col-lg-7">
+          <div class="card-modern" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-modern-header">
+              <h4 class="h5 mb-0">
+                <i class="bi bi-truck me-2"></i>Pickup Details
+              </h4>
             </div>
+            <div class="card-modern-body">
+              {% if pickup_request and pickup_request.status != "Completed" %}
+                <div class="alert-modern alert-warning-modern mb-4">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  You have an active pickup request. Please wait for it to be completed before submitting a new one.
+                </div>
+              {% else %}
+                <form method="post" action="{% url 'request_pickup' %}">
+                  {% csrf_token %}
+                  
+                  <div class="form-group-modern">
+                    <label class="form-label-modern">
+                      <i class="bi bi-check-circle me-2"></i>Are you ready for pickup?
+                    </label>
+                    <div class="radio-group">
+                      <div class="radio-option">
+                        <input type="radio" id="ready_yes" name="ready_for_pickup" value="True" class="radio-input">
+                        <label for="ready_yes" class="radio-label">
+                          <i class="bi bi-check-circle-fill"></i>
+                          <span>Yes, I'm ready</span>
+                        </label>
+                      </div>
+                      <div class="radio-option">
+                        <input type="radio" id="ready_no" name="ready_for_pickup" value="False" class="radio-input">
+                        <label for="ready_no" class="radio-label">
+                          <i class="bi bi-clock"></i>
+                          <span>Not yet, schedule for later</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group-modern">
+                    <label for="num_bags" class="form-label-modern">
+                      <i class="bi bi-bag me-2"></i>Number of bags
+                    </label>
+                    <div class="number-input-group">
+                      <button type="button" class="number-btn" onclick="decrementBags()">
+                        <i class="bi bi-dash"></i>
+                      </button>
+                      <input type="number" 
+                             id="num_bags" 
+                             name="num_bags" 
+                             class="form-control-modern text-center" 
+                             value="1" 
+                             min="1" 
+                             max="10"
+                             required>
+                      <button type="button" class="number-btn" onclick="incrementBags()">
+                        <i class="bi bi-plus"></i>
+                      </button>
+                    </div>
+                    <small class="text-secondary-500">Maximum 10 bags per pickup</small>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary-modern w-100">
+                    <i class="bi bi-send me-2"></i>Submit Pickup Request
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
         </div>
 
-        <div class="col-lg-4 mt-4 mt-lg-0">
-            <div class="p-4 rounded shadow-sm bg-light">
-                <h4 class="mb-3 text-center">Pickup Request Status</h4>
-                <div>
-                    {% if pickup_request %}
-                        <p><strong>Request Date:</strong> {{ pickup_request.created_at|date:"F j, Y g:i A" }}</p>
-                        <p><strong>Status:</strong> {{ pickup_request.status }}</p>
-                        
-                        {% if pickup_request.status == "Accepted" %}
-                            <div class="alert alert-success mt-3" role="alert">
-                                Our team will be out to pick up your bin on the designated day, depending on the zone of your house.
-                            </div>
-                        {% elif pickup_request.status == "Picked Up" %}
-                            <div class="alert alert-success mt-3" role="alert">
-                                We have successfully picked up your recyclables. We will notify you once we have processed your bags and it is complete. Thank you for recycling with WeCan!
-                            </div>                            
-                        {% elif pickup_request.status == "Completed" %}
-                            <div class="alert alert-success mt-3" role="alert">
-                                Thank you for using WeCan! Your bin pickup and collection are now complete. 
-                                <br>To view your recycling rewards and account balances, please visit your 
-                                <a href="{% url 'profile' %}" class="alert-link">Recycling History</a>.
-                                <br>We appreciate your efforts in making a difference for our planet!
-                            </div>
-                        
-                        
-                        {% endif %}
-                    {% else %}
-                        <p class="text-muted">No pickup request submitted yet.</p>
-                    {% endif %}
-                </div>
-                
+        <!-- Pickup Status -->
+        <div class="col-lg-5">
+          <div class="card-modern" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-modern-header">
+              <h4 class="h5 mb-0">
+                <i class="bi bi-info-circle me-2"></i>Pickup Status
+              </h4>
             </div>
+            <div class="card-modern-body">
+              {% if pickup_request %}
+                <div class="status-timeline">
+                  <div class="status-item">
+                    <div class="status-icon completed">
+                      <i class="bi bi-check"></i>
+                    </div>
+                    <div class="status-content">
+                      <h6 class="status-title">Request Submitted</h6>
+                      <p class="status-date">{{ pickup_request.created_at|date:"M d, Y g:i A" }}</p>
+                    </div>
+                  </div>
+
+                  <div class="status-item">
+                    <div class="status-icon {% if pickup_request.status == 'Accepted' or pickup_request.status == 'Picked Up' or pickup_request.status == 'Completed' %}completed{% else %}pending{% endif %}">
+                      {% if pickup_request.status == 'Accepted' or pickup_request.status == 'Picked Up' or pickup_request.status == 'Completed' %}
+                        <i class="bi bi-check"></i>
+                      {% else %}
+                        <i class="bi bi-clock"></i>
+                      {% endif %}
+                    </div>
+                    <div class="status-content">
+                      <h6 class="status-title">Request Accepted</h6>
+                      <p class="status-description">Our team will review your request</p>
+                    </div>
+                  </div>
+
+                  <div class="status-item">
+                    <div class="status-icon {% if pickup_request.status == 'Picked Up' or pickup_request.status == 'Completed' %}completed{% else %}pending{% endif %}">
+                      {% if pickup_request.status == 'Picked Up' or pickup_request.status == 'Completed' %}
+                        <i class="bi bi-check"></i>
+                      {% else %}
+                        <i class="bi bi-clock"></i>
+                      {% endif %}
+                    </div>
+                    <div class="status-content">
+                      <h6 class="status-title">Pickup Scheduled</h6>
+                      <p class="status-description">We'll collect your recyclables</p>
+                    </div>
+                  </div>
+
+                  <div class="status-item">
+                    <div class="status-icon {% if pickup_request.status == 'Completed' %}completed{% else %}pending{% endif %}">
+                      {% if pickup_request.status == 'Completed' %}
+                        <i class="bi bi-check"></i>
+                      {% else %}
+                        <i class="bi bi-clock"></i>
+                      {% endif %}
+                    </div>
+                    <div class="status-content">
+                      <h6 class="status-title">Processing Complete</h6>
+                      <p class="status-description">Rewards added to your account</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Status Messages -->
+                {% if pickup_request.status == "Accepted" %}
+                  <div class="alert-modern alert-success-modern mt-4">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Our team will be out to pick up your bin on the designated day, depending on your zone.
+                  </div>
+                {% elif pickup_request.status == "Picked Up" %}
+                  <div class="alert-modern alert-success-modern mt-4">
+                    <i class="bi bi-truck"></i>
+                    We have successfully picked up your recyclables. We will notify you once processing is complete.
+                  </div>
+                {% elif pickup_request.status == "Completed" %}
+                  <div class="alert-modern alert-success-modern mt-4">
+                    <i class="bi bi-award"></i>
+                    Thank you for using WeCan! Your pickup is complete. 
+                    <a href="{% url 'profile' %}" class="alert-link">View your rewards</a>.
+                  </div>
+                {% endif %}
+              {% else %}
+                <div class="empty-state text-center">
+                  <div class="empty-icon mb-3">
+                    <i class="bi bi-calendar-x text-secondary-400"></i>
+                  </div>
+                  <h6 class="text-secondary-600 mb-2">No active pickup request</h6>
+                  <p class="text-secondary-500 small">Submit a pickup request to track its status here.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Pickup Guidelines -->
+          <div class="card-modern mt-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-modern-header">
+              <h4 class="h5 mb-0">
+                <i class="bi bi-lightbulb me-2"></i>Pickup Guidelines
+              </h4>
+            </div>
+            <div class="card-modern-body">
+              <ul class="guidelines-list">
+                <li>
+                  <i class="bi bi-check-circle text-success me-2"></i>
+                  Clean containers before pickup
+                </li>
+                <li>
+                  <i class="bi bi-check-circle text-success me-2"></i>
+                  Separate by material type
+                </li>
+                <li>
+                  <i class="bi bi-check-circle text-success me-2"></i>
+                  Place bags in designated area
+                </li>
+                <li>
+                  <i class="bi bi-check-circle text-success me-2"></i>
+                  Be available during pickup window
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
+<style>
+.page-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-600);
+  font-size: 2rem;
+  margin: 0 auto;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.radio-option {
+  position: relative;
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 2px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.radio-label:hover {
+  border-color: var(--primary-300);
+  background: var(--primary-50);
+}
+
+.radio-input:checked + .radio-label {
+  border-color: var(--primary-500);
+  background: var(--primary-50);
+  color: var(--primary-700);
+}
+
+.radio-label i {
+  font-size: 1.25rem;
+  color: var(--secondary-400);
+}
+
+.radio-input:checked + .radio-label i {
+  color: var(--primary-500);
+}
+
+.number-input-group {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: white;
+}
+
+.number-btn {
+  width: 40px;
+  height: 48px;
+  border: none;
+  background: var(--secondary-100);
+  color: var(--secondary-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.number-btn:hover {
+  background: var(--primary-100);
+  color: var(--primary-600);
+}
+
+.number-input-group input {
+  border: none;
+  flex: 1;
+  height: 48px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.number-input-group input:focus {
+  box-shadow: none;
+  transform: none;
+}
+
+.status-timeline {
+  position: relative;
+}
+
+.status-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  position: relative;
+}
+
+.status-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 32px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--secondary-200);
+}
+
+.status-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.status-icon.completed {
+  background: var(--primary-500);
+  color: white;
+}
+
+.status-icon.pending {
+  background: var(--secondary-200);
+  color: var(--secondary-500);
+}
+
+.status-content {
+  flex: 1;
+}
+
+.status-title {
+  font-weight: 600;
+  color: var(--secondary-800);
+  margin-bottom: var(--spacing-1);
+  font-size: var(--font-size-sm);
+}
+
+.status-date {
+  font-size: var(--font-size-xs);
+  color: var(--secondary-500);
+  margin: 0;
+}
+
+.status-description {
+  font-size: var(--font-size-xs);
+  color: var(--secondary-500);
+  margin: 0;
+}
+
+.guidelines-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guidelines-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--secondary-600);
+}
+
+.empty-state {
+  padding: var(--spacing-8) var(--spacing-4);
+}
+
+.empty-icon {
+  font-size: 3rem;
+}
+
+.alert-link {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.alert-link:hover {
+  color: inherit;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .radio-group {
+    gap: var(--spacing-2);
+  }
+  
+  .radio-label {
+    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+  
+  .status-timeline {
+    margin-left: var(--spacing-2);
+  }
+}
+</style>
+
+<script>
+function incrementBags() {
+  const input = document.getElementById('num_bags');
+  const currentValue = parseInt(input.value);
+  if (currentValue < 10) {
+    input.value = currentValue + 1;
+  }
+}
+
+function decrementBags() {
+  const input = document.getElementById('num_bags');
+  const currentValue = parseInt(input.value);
+  if (currentValue > 1) {
+    input.value = currentValue - 1;
+  }
+}
+</script>
 {% endblock %}

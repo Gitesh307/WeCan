@@ -1,305 +1,568 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
-My Account Information
+Account Settings - WeCan
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mb-4">My Account Information</h1>
-   <form method="post" enctype="multipart/form-data" action="">
+<div class="container py-5">
+  <!-- Settings Header -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="settings-header" data-aos="fade-up">
+        <div class="d-flex align-items-center">
+          <div class="settings-icon me-4">
+            <i class="bi bi-gear"></i>
+          </div>
+          <div>
+            <h1 class="h2 fw-bold mb-2">Account Settings</h1>
+            <p class="text-secondary-600 mb-0">Manage your profile information and preferences</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" action="">
     {% csrf_token %}
-    <div class="table-responsive">
-        <table class="table table-borderless">
-            <tbody>
-             <!-- Profile Picture -->
-                    <tr>
-                        <th style="vertical-align: middle;">Profile Picture:</th>
-                        <td>
-                            {% if subscriber_form.instance.profile_picture %}
-                                <img src="{{ subscriber_form.instance.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
-                            {% else %}
-                                <p>No profile picture uploaded</p>
-                            {% endif %}
-                                {{ subscriber_form.profile_picture.as_widget }}
-                        </td>
-                    </tr>
-                <tr>
-                    <th>Account Number:</th>
-                    <td>{{ user.id }}</td>
-                </tr>
-                <tr>
-                    <th>Email Address / Login:</th>
-                    <td>
-                        {{ subscriber_form.email }}
-                        {% for error in subscriber_form.email.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>First Name:</th>
-                    <td>
-                        {{ subscriber_form.fname }}
-                        {% for error in subscriber_form.fname.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Last Name:</th>
-                    <td>
-                        {{ subscriber_form.lname }}
-                        {% for error in subscriber_form.lname.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Phone:</th>
-                    <td>
-                        {{ subscriber_form.phone }}
-                        {% for error in subscriber_form.phone.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Street Address:</th>
-                    <td>
-                        {{ subscriber_form.street_address }}
-                        {% for error in subscriber_form.street_address.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>City:</th>
-                    <td>
-                        {{ subscriber_form.city }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>State:</th>
-                    <td>
-                        {{ subscriber_form.state }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Zip Code:</th>
-                    <td>
-                        {{ subscriber_form.zip_code }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Payment Method:</th>
-                    <td>
-                        {{ subscriber_form.payment_method }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Password:</th>
-                    <td>
-                        {{ subscriber_form.password }}
-                        {% for error in subscriber_form.password.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Confirm Password:</th>
-                    <td>
-                        {{ subscriber_form.confirm_password }}
-                        {% for error in subscriber_form.confirm_password.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="d-flex justify-content-end mt-3">
-        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
-    </div>
-</form>
-    <div class="charity-section">
-    <h2 class="charity-title">Donate to Charity</h2>
+    
+    <div class="row g-4">
+      <!-- Profile Information -->
+      <div class="col-lg-8">
+        <div class="card-modern" data-aos="fade-up">
+          <div class="card-modern-header">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-person me-2"></i>Profile Information
+            </h4>
+          </div>
+          <div class="card-modern-body">
+            <!-- Profile Picture -->
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-camera me-2"></i>Profile Picture
+              </label>
+              <div class="profile-picture-upload">
+                <div class="current-picture">
+                  {% if subscriber_form.instance.profile_picture %}
+                    <img src="{{ subscriber_form.instance.profile_picture.url }}" alt="Profile Picture" class="profile-preview">
+                  {% else %}
+                    <div class="profile-placeholder">
+                      <i class="bi bi-person-circle"></i>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="upload-controls">
+                  {{ subscriber_form.profile_picture }}
+                  <label for="{{ subscriber_form.profile_picture.id_for_label }}" class="btn btn-outline-modern btn-sm">
+                    <i class="bi bi-upload me-2"></i>Change Picture
+                  </label>
+                </div>
+              </div>
+            </div>
 
-    <!-- Charity 1: Jeremiah’s Inn -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/JeremiahsInnLogo.jpg' %}" alt="Jeremiah’s Inn Logo">
-        </div>
-        <div class="charity-content">
-            <h3>Jeremiah’s Inn</h3>
-            <p>Jeremiah's Inn uses a social model to provide services related to nutrition, substance abuse, and homelessness, helping to empower men towards independence and wellness.</p>
-            <a href="https://www.jeremiahsinn.org/" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-person me-2"></i>First Name
+                  </label>
+                  {{ subscriber_form.fname }}
+                  {% for error in subscriber_form.fname.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-person me-2"></i>Last Name
+                  </label>
+                  {{ subscriber_form.lname }}
+                  {% for error in subscriber_form.lname.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
 
-    <!-- Charity 2: Salvation Army Worcester -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/Salvation Army.png' %}" alt="Salvation Army Worcester Logo">
-        </div>
-        <div class="charity-content">
-            <h3>Salvation Army Worcester</h3>
-            <p>The Salvation Army Worcester provides community support, food, clothing, and emergency shelter to individuals and families in need across Worcester County.</p>
-            <a href="https://massachusetts.salvationarmy.org/MA/Worcester" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-envelope me-2"></i>Email Address
+              </label>
+              {{ subscriber_form.email }}
+              {% for error in subscriber_form.email.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-    <!-- Charity 3: CENTRO Inc -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/Centro.png' %}" alt="CENTRO Inc Logo">
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-telephone me-2"></i>Phone Number
+              </label>
+              {{ subscriber_form.phone }}
+              {% for error in subscriber_form.phone.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-        <div class="charity-content">
-            <h3>CENTRO Inc</h3>
-            <p>CENTRO is Worcester's largest minority-led nonprofit, supporting the Latinx community with access to health, education, and social services to achieve self-sufficiency.</p>
-            <a href="https://www.centroinc.org/" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
 
-    <!-- Charity 4: Inner Voice Outer Change -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/IVOC.jpeg' %}" alt="Inner Voice Outer Change Logo">
-        </div>
-        <div class="charity-content">
-            <h3>Inner Voice Outer Change</h3>
-            <p>Inner Voice Outer Change focuses on personal development and mental wellness through community-based workshops and programs for youth and adults.</p>
-            <a href="https://innervoiceouterchange.org/" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
+        <!-- Address Information -->
+        <div class="card-modern mt-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-modern-header">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-geo-alt me-2"></i>Address Information
+            </h4>
+          </div>
+          <div class="card-modern-body">
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-house me-2"></i>Street Address
+              </label>
+              {{ subscriber_form.street_address }}
+              {% for error in subscriber_form.street_address.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-    <!-- Charity 5: Boys & Girls Club Worcester -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/BGCW.jpeg' %}" alt="Boys & Girls Club Worcester Logo">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-building me-2"></i>City
+                  </label>
+                  {{ subscriber_form.city }}
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">State</label>
+                  {{ subscriber_form.state }}
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">ZIP Code</label>
+                  {{ subscriber_form.zip_code }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="charity-content">
-            <h3>Boys & Girls Club Worcester</h3>
-            <p>The Boys & Girls Club of Worcester supports youth with afterschool activities, sports, and educational programs aimed at promoting success and leadership.</p>
-            <a href="https://www.bgcworcester.org/" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
 
-    <!-- Charity 6: Girls Inc Worcester -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/girlsinworc.png' %}" alt="Girls Inc Worcester Logo">
+        <!-- Security Settings -->
+        <div class="card-modern mt-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-modern-header">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-shield-lock me-2"></i>Security Settings
+            </h4>
+          </div>
+          <div class="card-modern-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock me-2"></i>New Password
+                  </label>
+                  {{ subscriber_form.password }}
+                  {% for error in subscriber_form.password.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                  {% endfor %}
+                  <small class="text-secondary-500">Leave blank to keep current password</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                  </label>
+                  {{ subscriber_form.confirm_password }}
+                  {% for error in subscriber_form.confirm_password.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="charity-content">
-            <h3>Girls Inc Worcester</h3>
-            <p>Girls Inc. Worcester empowers girls and young women with life skills, education, and mentorship to become strong, smart, and bold leaders in their community.</p>
-            <a href="https://www.girlsincworcester.org/" class="read-more-link" target="_blank">Read More</a>
-        </div>
-    </div>
+      </div>
 
-    <!-- Charity 7: Worcester Animal Rescue League -->
-    <div class="charity-card">
-        <div class="charity-logo">
-            <img src="{% static 'img/WARL.png' %}" alt="Worcester Animal Rescue League Logo">
+      <!-- Account Summary & Payment -->
+      <div class="col-lg-4">
+        <!-- Account Summary -->
+        <div class="card-modern" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-modern-header">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-person-badge me-2"></i>Account Summary
+            </h4>
+          </div>
+          <div class="card-modern-body">
+            <div class="account-info">
+              <div class="info-item">
+                <span class="info-label">Account ID</span>
+                <span class="info-value">#{{ user.id }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Member Since</span>
+                <span class="info-value">{{ subscriber_form.instance.created_at|date:"M Y" }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Account Status</span>
+                <span class="info-value">
+                  <span class="badge bg-success-100 text-success-700">Active</span>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="charity-content">
-            <h3>Worcester Animal Rescue League</h3>
-            <p>The Worcester Animal Rescue League provides shelter and adoption services for animals, advocating for the humane treatment and welfare of all animals in Worcester.</p>
-            <a href="https://worcesterarl.org/" class="read-more-link" target="_blank">Read More</a>
+
+        <!-- Payment Settings -->
+        <div class="card-modern mt-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-modern-header">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-credit-card me-2"></i>Payment Method
+            </h4>
+          </div>
+          <div class="card-modern-body">
+            <div class="form-group-modern">
+              <label class="form-label-modern">Preferred Payment Method</label>
+              {{ subscriber_form.payment_method }}
+            </div>
+            <div class="payment-info">
+              <small class="text-secondary-500">
+                <i class="bi bi-info-circle me-1"></i>
+                Payments are processed within 24-48 hours after pickup completion.
+              </small>
+            </div>
+          </div>
         </div>
+
+        <!-- Save Button -->
+        <div class="mt-4" data-aos="fade-up" data-aos-delay="300">
+          <button type="submit" class="btn btn-primary-modern w-100">
+            <i class="bi bi-check-circle me-2"></i>Save Changes
+          </button>
+        </div>
+      </div>
     </div>
-</div>
+  </form>
+
+  <!-- Charity Section -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card-modern" data-aos="fade-up">
+        <div class="card-modern-header">
+          <h4 class="h5 mb-0">
+            <i class="bi bi-heart me-2"></i>Support Local Charities
+          </h4>
+        </div>
+        <div class="card-modern-body">
+          <p class="text-secondary-600 mb-4">Consider donating a portion of your recycling rewards to support local organizations making a difference in our community.</p>
+          
+          <div class="row g-3">
+            <div class="col-md-6 col-lg-4">
+              <div class="charity-card">
+                <div class="charity-logo">
+                  <img src="{% static 'img/JeremiahsInnLogo.jpg' %}" alt="Jeremiah's Inn">
+                </div>
+                <div class="charity-info">
+                  <h6 class="charity-name">Jeremiah's Inn</h6>
+                  <p class="charity-description">Supporting men towards independence and wellness</p>
+                  <a href="https://www.jeremiahsinn.org/" target="_blank" class="btn btn-outline-modern btn-sm">
+                    Learn More
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+              <div class="charity-card">
+                <div class="charity-logo">
+                  <img src="{% static 'img/Salvation Army.png' %}" alt="Salvation Army">
+                </div>
+                <div class="charity-info">
+                  <h6 class="charity-name">Salvation Army</h6>
+                  <p class="charity-description">Community support and emergency services</p>
+                  <a href="https://massachusetts.salvationarmy.org/MA/Worcester" target="_blank" class="btn btn-outline-modern btn-sm">
+                    Learn More
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+              <div class="charity-card">
+                <div class="charity-logo">
+                  <img src="{% static 'img/Centro.png' %}" alt="CENTRO Inc">
+                </div>
+                <div class="charity-info">
+                  <h6 class="charity-name">CENTRO Inc</h6>
+                  <p class="charity-description">Supporting the Latinx community</p>
+                  <a href="https://www.centroinc.org/" target="_blank" class="btn btn-outline-modern btn-sm">
+                    Learn More
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
-    .table th {
-        text-align: left;
-        width: 30%;
-    }
-    .table td input, .table td select, .table td textarea {
-        width: 100%;
-    }
-    .table-borderless th, .table-borderless td {
-        padding: 8px 12px;
-        border-top: none;
-    }
-     .charity-section {
-        padding: 50px 20px;
-        background-color: #f9f9f9;
-    }
+.settings-header {
+  background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+  padding: var(--spacing-8);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--secondary-200);
+}
 
-    .charity-title {
-        text-align: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 30px;
-    }
+.settings-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-600);
+  font-size: 2rem;
+}
 
-    .charity-card {
-        display: flex;
-        align-items: center;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        padding: 20px;
-        transition: all 0.3s ease;
-    }
+.profile-picture-upload {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
 
-    .charity-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-    }
+.current-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--secondary-200);
+  flex-shrink: 0;
+}
 
-    .charity-logo {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        overflow: hidden;
-        flex-shrink: 0;
-        margin-right: 20px;
-    }
+.profile-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    .charity-logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--secondary-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--secondary-400);
+}
 
-    .charity-content {
-        flex: 1;
-    }
+.upload-controls {
+  flex: 1;
+}
 
-    .charity-content h3 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        color: #333;
-    }
+.upload-controls input[type="file"] {
+  display: none;
+}
 
-    .charity-content p {
-        font-size: 1rem;
-        color: #555;
-        margin-bottom: 10px;
-    }
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
 
-    .read-more-link {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: bold;
-    }
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--secondary-200);
+}
 
-    .read-more-link:hover {
-        text-decoration: underline;
-    }
-    @media (max-width: 768px) {
-    .charity-card {
-        flex-direction: column;
-        text-align: center;
-    }
+.info-item:last-child {
+  border-bottom: none;
+}
 
-    .charity-logo {
-        margin-bottom: 20px;
-    }
+.info-label {
+  font-size: var(--font-size-sm);
+  color: var(--secondary-600);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: var(--font-size-sm);
+  color: var(--secondary-800);
+  font-weight: 600;
+}
+
+.badge {
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.bg-success-100 {
+  background-color: #dcfce7 !important;
+}
+
+.text-success-700 {
+  color: #15803d !important;
+}
+
+.payment-info {
+  margin-top: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--secondary-50);
+  border-radius: var(--radius-md);
+}
+
+.charity-card {
+  background: white;
+  border: 1px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  text-align: center;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.charity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.charity-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto var(--spacing-3);
+  border: 2px solid var(--secondary-200);
+}
+
+.charity-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.charity-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.charity-name {
+  font-weight: 600;
+  color: var(--secondary-800);
+  margin-bottom: var(--spacing-2);
+  font-size: var(--font-size-sm);
+}
+
+.charity-description {
+  font-size: var(--font-size-xs);
+  color: var(--secondary-600);
+  margin-bottom: var(--spacing-3);
+  flex: 1;
+}
+
+/* Form styling */
+.form-control-modern {
+  border: 2px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  transition: all 0.3s ease;
+  background: white;
+  width: 100%;
+}
+
+.form-control-modern:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  transform: translateY(-1px);
+}
+
+select.form-control-modern {
+  cursor: pointer;
+}
+
+input[type="file"].form-control-modern {
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .settings-header {
+    padding: var(--spacing-6);
+  }
+  
+  .settings-header .d-flex {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-4);
+  }
+  
+  .settings-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .profile-picture-upload {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .current-picture {
+    width: 80px;
+    height: 80px;
+  }
 }
 </style>
+
+<script>
+// Initialize form controls styling
+document.addEventListener('DOMContentLoaded', function() {
+  const allInputs = document.querySelectorAll('input, select, textarea');
+  allInputs.forEach(input => {
+    if (!input.classList.contains('form-control-modern')) {
+      input.classList.add('form-control-modern');
+    }
+  });
+  
+  // Profile picture preview
+  const fileInput = document.querySelector('input[type="file"]');
+  if (fileInput) {
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.querySelector('.profile-preview');
+          const placeholder = document.querySelector('.profile-placeholder');
+          
+          if (preview) {
+            preview.src = e.target.result;
+          } else if (placeholder) {
+            placeholder.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="profile-preview">`;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

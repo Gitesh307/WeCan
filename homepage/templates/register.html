@@ -1,148 +1,351 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Sign-Up
+Sign Up - WeCan
 {% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; background-color: #f5f5f5; border-radius: 10px;">
-        <h3 class="text-center mb-4">Create an Account</h3>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="form-modern" data-aos="fade-up">
+        <div class="text-center mb-5">
+          <div class="register-icon mb-3">
+            <i class="bi bi-person-plus text-primary-500"></i>
+          </div>
+          <h2 class="h3 fw-bold mb-2">Create Your Account</h2>
+          <p class="text-secondary-600">Join WeCan and start making a difference</p>
+        </div>
+        
         <form method="POST" enctype="multipart/form-data" action="{% url 'register' %}">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="role" class="form-label">Select Role:</label>
-                <select id="role" name="role" class="form-select">
-                    <option>-----</option>
-                    <option value="Subscriber">Subscriber</option>
-                    <option value="Driver">Driver</option>
-                    <option value="RedemptionCenterWorker">Redemption Center Worker</option>
-                </select>
-            </div>
+          {% csrf_token %}
+          
+          <div class="form-group-modern">
+            <label for="role" class="form-label-modern">
+              <i class="bi bi-person-badge me-2"></i>Account Type
+            </label>
+            <select id="role" name="role" class="form-control-modern" required>
+              <option value="">Select your role</option>
+              <option value="Subscriber">Subscriber (Recycle & Earn)</option>
+              <option value="Driver">Driver (Pickup Service)</option>
+              <option value="RedemptionCenterWorker">Redemption Worker</option>
+            </select>
+          </div>
 
-            <div id="subscriber-form" style="display: none;">
-                {% for field in subscriber_form %}
-                <div class="mb-3 row">
-                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
-                    <div class="col-sm-8">
-                        {{ field }}
-                        {% for error in field.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+          <!-- Subscriber Form -->
+          <div id="subscriber-form" class="role-form" style="display: none;">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-person me-2"></i>First Name
+                  </label>
+                  {{ subscriber_form.fname }}
                 </div>
-                {% endfor %}
-            </div>
-
-            <div id="driver-form" style="display: none;">
-                {% for field in driver_form %}
-                <div class="mb-3 row">
-                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
-                    <div class="col-sm-8">
-                        {{ field }}
-                        {% for error in field.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-person me-2"></i>Last Name
+                  </label>
+                  {{ subscriber_form.lname }}
                 </div>
-                {% endfor %}
+              </div>
             </div>
-
-            <div id="worker-form" style="display: none;">
-                {% for field in worker_form %}
-                <div class="mb-3 row">
-                    <label for="{{ field.id_for_label }}" class="col-form-label col-sm-4">{{ field.label }}</label>
-                    <div class="col-sm-8">
-                        {{ field }}
-                        {% for error in field.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-person-circle me-2"></i>Username
+              </label>
+              {{ subscriber_form.username }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-envelope me-2"></i>Email Address
+              </label>
+              {{ subscriber_form.email }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-telephone me-2"></i>Phone Number
+              </label>
+              {{ subscriber_form.phone }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-geo-alt me-2"></i>Street Address
+              </label>
+              {{ subscriber_form.street_address }}
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-building me-2"></i>City
+                  </label>
+                  {{ subscriber_form.city }}
                 </div>
-                {% endfor %}
+              </div>
+              <div class="col-md-3">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">State</label>
+                  {{ subscriber_form.state }}
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">ZIP Code</label>
+                  {{ subscriber_form.zip_code }}
+                </div>
+              </div>
             </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-credit-card me-2"></i>Payment Method
+              </label>
+              {{ subscriber_form.payment_method }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-camera me-2"></i>Profile Picture (Optional)
+              </label>
+              {{ subscriber_form.profile_picture }}
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock me-2"></i>Password
+                  </label>
+                  {{ subscriber_form.password1 }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                  </label>
+                  {{ subscriber_form.password2 }}
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <button type="submit" class="btn btn-primary">Register</button>
+          <!-- Driver Form -->
+          <div id="driver-form" class="role-form" style="display: none;">
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-person-circle me-2"></i>Username
+              </label>
+              {{ driver_form.username }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-person me-2"></i>Full Name
+              </label>
+              {{ driver_form.name }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-envelope me-2"></i>Email Address
+              </label>
+              {{ driver_form.email }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-telephone me-2"></i>Phone Number
+              </label>
+              {{ driver_form.phone }}
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock me-2"></i>Password
+                  </label>
+                  {{ driver_form.password1 }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                  </label>
+                  {{ driver_form.password2 }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Worker Form -->
+          <div id="worker-form" class="role-form" style="display: none;">
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-person-circle me-2"></i>Username
+              </label>
+              {{ worker_form.username }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-person me-2"></i>Full Name
+              </label>
+              {{ worker_form.name }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-envelope me-2"></i>Email Address
+              </label>
+              {{ worker_form.email }}
+            </div>
+            
+            <div class="form-group-modern">
+              <label class="form-label-modern">
+                <i class="bi bi-telephone me-2"></i>Phone Number
+              </label>
+              {{ worker_form.phone }}
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock me-2"></i>Password
+                  </label>
+                  {{ worker_form.password1 }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern">
+                    <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                  </label>
+                  {{ worker_form.password2 }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-modern w-100 mb-4" id="submitBtn" disabled>
+            <i class="bi bi-rocket-takeoff me-2"></i>Create Account
+          </button>
         </form>
-        <hr class="my-4">
 
         <div class="text-center">
-            <p class="mb-2">Already have an account?</p>
-            <a href="{% url 'login' %}" class="btn btn-outline-secondary">Login</a>
+          <p class="text-secondary-600 mb-3">Already have an account?</p>
+          <a href="{% url 'login' %}" class="btn btn-outline-modern">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+          </a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
-<script>
-    document.getElementById('role').addEventListener('change', function () {
-        const role = this.value;
-
-        const subscriberForm = document.getElementById('subscriber-form');
-        const driverForm = document.getElementById('driver-form');
-        const workerForm = document.getElementById('worker-form');
-
-        subscriberForm.style.display = 'none';
-        driverForm.style.display = 'none';
-        workerForm.style.display = 'none';
-
-        disableFormInputs(subscriberForm, true);
-        disableFormInputs(driverForm, true);
-        disableFormInputs(workerForm, true);
-
-        if (role === 'Subscriber') {
-            subscriberForm.style.display = 'block';
-            disableFormInputs(subscriberForm, false);
-        } else if (role === 'Driver') {
-            driverForm.style.display = 'block';
-            disableFormInputs(driverForm, false);
-        } else if (role === 'RedemptionCenterWorker') {
-            workerForm.style.display = 'block';
-            disableFormInputs(workerForm, false);
-        }
-    });
-
-    function disableFormInputs(form, disable) {
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.disabled = disable;
-        });
-    }
-</script>
-
-
 <style>
-    body {
-        background-color: #ffffff;
-    }
-    .card {
-        background-color: #f5f5f5;
-        border-radius: 10px;
-    }
-    h3 {
-        font-weight: bold;
-        color: #333;
-    }
-    .btn-primary {
-        font-size: 1rem;
-        font-weight: 600;
-    }
-    button {
-        font-size: 1rem;
-        padding: 0.5rem 1.5rem;
-    }
-    label {
-        font-weight: 600;
-        color: #555;
-    }
-    input, select, textarea {
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        padding: 0.375rem 0.75rem;
-        width: 100%;
-    }
-    .text-danger {
-        font-size: 0.875rem;
-    }
-</style>
-{% endblock %}
+.register-icon {
+  font-size: 4rem;
+  color: var(--primary-500);
+}
 
+.role-form {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-control-modern {
+  border: 2px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  transition: all 0.3s ease;
+  background: white;
+  width: 100%;
+}
+
+.form-control-modern:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  transform: translateY(-1px);
+}
+
+select.form-control-modern {
+  cursor: pointer;
+}
+
+input[type="file"].form-control-modern {
+  padding: var(--spacing-2) var(--spacing-3);
+}
+</style>
+
+<script>
+document.getElementById('role').addEventListener('change', function () {
+  const role = this.value;
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Hide all forms
+  const forms = document.querySelectorAll('.role-form');
+  forms.forEach(form => {
+    form.style.display = 'none';
+    disableFormInputs(form, true);
+  });
+  
+  // Show selected form
+  if (role) {
+    let targetForm;
+    if (role === 'Subscriber') {
+      targetForm = document.getElementById('subscriber-form');
+    } else if (role === 'Driver') {
+      targetForm = document.getElementById('driver-form');
+    } else if (role === 'RedemptionCenterWorker') {
+      targetForm = document.getElementById('worker-form');
+    }
+    
+    if (targetForm) {
+      targetForm.style.display = 'block';
+      disableFormInputs(targetForm, false);
+      submitBtn.disabled = false;
+    }
+  } else {
+    submitBtn.disabled = true;
+  }
+});
+
+function disableFormInputs(form, disable) {
+  const inputs = form.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    input.disabled = disable;
+    if (!disable) {
+      input.classList.add('form-control-modern');
+    }
+  });
+}
+
+// Initialize form controls styling
+document.addEventListener('DOMContentLoaded', function() {
+  const allInputs = document.querySelectorAll('input, select, textarea');
+  allInputs.forEach(input => {
+    if (!input.classList.contains('form-control-modern')) {
+      input.classList.add('form-control-modern');
+    }
+  });
+});
+</script>
+{% endblock %}
