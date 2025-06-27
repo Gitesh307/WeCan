@@ -13,10 +13,113 @@ Dashboard - WeCan
         <div class="d-flex align-items-center justify-content-between">
           <div>
             <h1 class="h2 fw-bold mb-2">Welcome back, {{ user.first_name|default:user.username }}!</h1>
-            <p class="text-secondary-600 mb-0">Manage your recycling activities and track your impact</p>
+            <p class="text-secondary-600 mb-0">Manage your recycling activities and track your environmental impact</p>
           </div>
           <div class="dashboard-avatar">
             <i class="bi bi-person-circle text-primary-500"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Overview -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="stat-card-dashboard">
+        <div class="stat-icon-dashboard bg-primary">
+          <i class="bi bi-recycle"></i>
+        </div>
+        <div class="stat-content-dashboard">
+          <div class="stat-number-dashboard" id="itemsRecycled">0</div>
+          <div class="stat-label-dashboard">Items Recycled</div>
+          <div class="stat-change positive">+12% this month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+      <div class="stat-card-dashboard">
+        <div class="stat-icon-dashboard bg-success">
+          <i class="bi bi-cash-coin"></i>
+        </div>
+        <div class="stat-content-dashboard">
+          <div class="stat-number-dashboard" id="totalEarned">$0.00</div>
+          <div class="stat-label-dashboard">Total Earned</div>
+          <div class="stat-change positive">+$5.20 this week</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+      <div class="stat-card-dashboard">
+        <div class="stat-icon-dashboard bg-warning">
+          <i class="bi bi-truck"></i>
+        </div>
+        <div class="stat-content-dashboard">
+          <div class="stat-number-dashboard" id="pickupsCompleted">0</div>
+          <div class="stat-label-dashboard">Pickups Completed</div>
+          <div class="stat-change neutral">2 pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+      <div class="stat-card-dashboard">
+        <div class="stat-icon-dashboard bg-info">
+          <i class="bi bi-tree"></i>
+        </div>
+        <div class="stat-content-dashboard">
+          <div class="stat-number-dashboard" id="co2Saved">0.0 kg</div>
+          <div class="stat-label-dashboard">CO₂ Saved</div>
+          <div class="stat-change positive">Great impact!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts and Analytics -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-8" data-aos="fade-up">
+      <div class="card-modern">
+        <div class="card-modern-header">
+          <div class="d-flex align-items-center justify-content-between">
+            <h4 class="h5 mb-0">
+              <i class="bi bi-bar-chart me-2"></i>Recycling Activity
+            </h4>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-modern active" onclick="updateChart('week')">Week</button>
+              <button class="btn btn-outline-modern" onclick="updateChart('month')">Month</button>
+              <button class="btn btn-outline-modern" onclick="updateChart('year')">Year</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-modern-body">
+          <canvas id="recyclingChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="card-modern h-100">
+        <div class="card-modern-header">
+          <h4 class="h5 mb-0">
+            <i class="bi bi-pie-chart me-2"></i>Carbon Impact
+          </h4>
+        </div>
+        <div class="card-modern-body text-center">
+          <canvas id="carbonChart" width="200" height="200"></canvas>
+          <div class="mt-4">
+            <div class="carbon-info">
+              <div class="carbon-metric">
+                <span class="carbon-value">2.4 kg</span>
+                <span class="carbon-label">CO₂ Saved This Month</span>
+              </div>
+              <div class="carbon-equivalent">
+                <i class="bi bi-tree text-success me-2"></i>
+                Equivalent to planting <strong>0.1 trees</strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -71,73 +174,117 @@ Dashboard - WeCan
     </div>
   </div>
 
-  <!-- Dashboard Stats -->
-  <div class="row g-4 mb-5">
-    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="bi bi-recycle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Items Recycled</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="bi bi-cash-coin"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">$0.00</div>
-          <div class="stat-label">Total Earned</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="bi bi-truck"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Pickups Completed</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <i class="bi bi-tree"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number">0 lbs</div>
-          <div class="stat-label">CO₂ Saved</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Activity -->
+  <!-- Pickup History Table -->
   <div class="row">
     <div class="col-12" data-aos="fade-up">
       <div class="card-modern">
         <div class="card-modern-header">
           <div class="d-flex align-items-center justify-content-between">
-            <h4 class="h5 mb-0">Recent Activity</h4>
-            <a href="{% url 'profile' %}" class="btn btn-outline-modern btn-sm">View All</a>
+            <h4 class="h5 mb-0">
+              <i class="bi bi-table me-2"></i>Recent Pickup History
+            </h4>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-modern btn-sm" onclick="exportHistory('csv')">
+                <i class="bi bi-download me-1"></i>Export CSV
+              </button>
+              <button class="btn btn-outline-modern btn-sm" onclick="exportHistory('pdf')">
+                <i class="bi bi-file-pdf me-1"></i>Export PDF
+              </button>
+            </div>
           </div>
         </div>
         <div class="card-modern-body">
-          <div class="empty-state text-center py-5">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Status</th>
+                  <th>Bag ID</th>
+                  <th>Items</th>
+                  <th>Location</th>
+                  <th>Earnings</th>
+                </tr>
+              </thead>
+              <tbody id="pickupHistoryTable">
+                <!-- Sample data - replace with Django template data -->
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-calendar3 me-2 text-secondary-500"></i>
+                      <div>
+                        <div class="fw-medium">Jan 15, 2024</div>
+                        <small class="text-secondary-500">2:30 PM</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-success-100 text-success-700">
+                      <i class="bi bi-check-circle me-1"></i>Completed
+                    </span>
+                  </td>
+                  <td>
+                    <code class="bg-secondary-100 px-2 py-1 rounded">QR-001</code>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-box me-2 text-primary-500"></i>
+                      <span>24 items</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-geo-alt me-2 text-secondary-500"></i>
+                      <span>Zone A</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="fw-medium text-success">$0.77</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-calendar3 me-2 text-secondary-500"></i>
+                      <div>
+                        <div class="fw-medium">Jan 12, 2024</div>
+                        <small class="text-secondary-500">10:15 AM</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-warning-100 text-warning-700">
+                      <i class="bi bi-clock me-1"></i>Scheduled
+                    </span>
+                  </td>
+                  <td>
+                    <code class="bg-secondary-100 px-2 py-1 rounded">QR-002</code>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-box me-2 text-primary-500"></i>
+                      <span>18 items</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-geo-alt me-2 text-secondary-500"></i>
+                      <span>Zone B</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="fw-medium text-secondary-500">Pending</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="empty-state text-center py-5" style="display: none;" id="emptyState">
             <div class="empty-icon mb-3">
               <i class="bi bi-inbox text-secondary-400"></i>
             </div>
-            <h5 class="text-secondary-600 mb-2">No recent activity</h5>
+            <h5 class="text-secondary-600 mb-2">No pickup history yet</h5>
             <p class="text-secondary-500 mb-4">Start by scheduling your first pickup to see your recycling history here.</p>
             <a href="{% url 'request_pickup' %}" class="btn btn-primary-modern">
               <i class="bi bi-plus-circle me-2"></i>Schedule First Pickup
@@ -162,6 +309,93 @@ Dashboard - WeCan
   color: var(--primary-500);
 }
 
+.stat-card-dashboard {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  border: 1px solid var(--secondary-200);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-500);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.stat-card-dashboard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card-dashboard:hover::before {
+  transform: scaleY(1);
+}
+
+.stat-icon-dashboard {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.bg-primary { background: var(--primary-500) !important; }
+.bg-success { background: var(--success-500) !important; }
+.bg-warning { background: var(--warning-500) !important; }
+.bg-info { background: var(--accent-500) !important; }
+
+.stat-content-dashboard {
+  flex: 1;
+}
+
+.stat-number-dashboard {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--secondary-800);
+  line-height: 1;
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-label-dashboard {
+  font-size: var(--font-size-sm);
+  color: var(--secondary-600);
+  font-weight: 500;
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-change {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.stat-change.positive {
+  color: var(--success-500);
+}
+
+.stat-change.negative {
+  color: var(--error-500);
+}
+
+.stat-change.neutral {
+  color: var(--secondary-500);
+}
+
 .action-icon {
   width: 80px;
   height: 80px;
@@ -181,52 +415,73 @@ Dashboard - WeCan
   background: linear-gradient(135deg, var(--primary-200), var(--primary-300));
 }
 
-.stat-card {
-  background: white;
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-6);
-  border: 1px solid var(--secondary-200);
+.carbon-info {
+  margin-top: var(--spacing-4);
+}
+
+.carbon-metric {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--spacing-4);
-  transition: all 0.3s ease;
+  margin-bottom: var(--spacing-3);
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.stat-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-number {
-  font-size: 1.75rem;
+.carbon-value {
+  font-size: 2rem;
   font-weight: 700;
-  color: var(--secondary-800);
+  color: var(--success-500);
   line-height: 1;
-  margin-bottom: var(--spacing-1);
 }
 
-.stat-label {
+.carbon-label {
   font-size: var(--font-size-sm);
   color: var(--secondary-600);
-  font-weight: 500;
+  margin-top: var(--spacing-1);
 }
+
+.carbon-equivalent {
+  font-size: var(--font-size-sm);
+  color: var(--secondary-600);
+  padding: var(--spacing-3);
+  background: var(--success-50);
+  border-radius: var(--radius-md);
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  border-bottom: 2px solid var(--secondary-200);
+  font-weight: 600;
+  color: var(--secondary-700);
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-4);
+}
+
+.table td {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--secondary-200);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: var(--secondary-50);
+}
+
+.badge {
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bg-success-100 { background-color: #dcfce7 !important; }
+.text-success-700 { color: #15803d !important; }
+.bg-warning-100 { background-color: #fef3c7 !important; }
+.text-warning-700 { color: #a16207 !important; }
 
 .empty-state {
   padding: var(--spacing-12) var(--spacing-6);
@@ -253,19 +508,153 @@ Dashboard - WeCan
     font-size: 3rem;
   }
   
-  .stat-card {
+  .stat-card-dashboard {
     padding: var(--spacing-4);
   }
   
-  .stat-icon {
+  .stat-icon-dashboard {
     width: 50px;
     height: 50px;
     font-size: 1.25rem;
   }
   
-  .stat-number {
+  .stat-number-dashboard {
     font-size: 1.5rem;
   }
 }
 </style>
+
+<script>
+// Sample data - replace with actual Django data
+const sampleData = {
+  itemsRecycled: 156,
+  totalEarned: 5.02,
+  pickupsCompleted: 8,
+  co2Saved: 3.12
+};
+
+// Animate counters on page load
+document.addEventListener('DOMContentLoaded', function() {
+  animateCounter('itemsRecycled', sampleData.itemsRecycled);
+  animateCounter('totalEarned', sampleData.totalEarned, '$');
+  animateCounter('pickupsCompleted', sampleData.pickupsCompleted);
+  animateCounter('co2Saved', sampleData.co2Saved, '', ' kg');
+  
+  initializeCharts();
+});
+
+function animateCounter(elementId, targetValue, prefix = '', suffix = '') {
+  const element = document.getElementById(elementId);
+  const duration = 2000;
+  const startTime = performance.now();
+  
+  function updateCounter(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    const currentValue = targetValue * progress;
+    const displayValue = prefix + (suffix.includes('$') ? currentValue.toFixed(2) : Math.floor(currentValue)) + suffix;
+    
+    element.textContent = displayValue;
+    
+    if (progress < 1) {
+      requestAnimationFrame(updateCounter);
+    }
+  }
+  
+  requestAnimationFrame(updateCounter);
+}
+
+function initializeCharts() {
+  // Recycling Activity Chart
+  const recyclingCtx = document.getElementById('recyclingChart').getContext('2d');
+  const recyclingChart = new Chart(recyclingCtx, {
+    type: 'line',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Items Recycled',
+        data: [12, 19, 8, 15, 22, 18, 25],
+        borderColor: 'rgb(34, 197, 94)',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  });
+
+  // Carbon Impact Chart
+  const carbonCtx = document.getElementById('carbonChart').getContext('2d');
+  const carbonChart = new Chart(carbonCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['CO₂ Saved', 'Remaining Goal'],
+      datasets: [{
+        data: [2.4, 2.6],
+        backgroundColor: [
+          'rgb(34, 197, 94)',
+          'rgba(226, 232, 240, 1)'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      cutout: '70%'
+    }
+  });
+}
+
+function updateChart(period) {
+  // Update chart data based on period
+  console.log('Updating chart for period:', period);
+  
+  // Update active button
+  document.querySelectorAll('.btn-group .btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+}
+
+function exportHistory(format) {
+  // Implement export functionality
+  console.log('Exporting history as:', format);
+  
+  if (format === 'csv') {
+    // Generate CSV export
+    alert('CSV export functionality would be implemented here');
+  } else if (format === 'pdf') {
+    // Generate PDF export
+    alert('PDF export functionality would be implemented here');
+  }
+}
+</script>
 {% endblock %}

@@ -15,6 +15,9 @@
     <!-- Custom Animations -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     {% load static %}
     
     <style>
@@ -391,6 +394,229 @@
         background: var(--primary-500);
         transform: translateY(-2px);
       }
+
+      /* Floating Chatbot Styles */
+      .chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+      }
+
+      .chatbot-button {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chatbot-button:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .chatbot-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform 0.3s ease;
+      }
+
+      .chatbot-button:hover::before {
+        transform: scale(1);
+      }
+
+      .chatbot-pulse {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 2px solid var(--primary-400);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.4);
+          opacity: 0;
+        }
+      }
+
+      .chatbot-window {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 350px;
+        max-width: calc(100vw - 40px);
+        background: white;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--secondary-200);
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: bottom right;
+      }
+
+      .chatbot-window.open {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+
+      .chatbot-header {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: white;
+        padding: var(--spacing-4);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .chatbot-header h6 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+      }
+
+      .chatbot-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: var(--spacing-1);
+        border-radius: var(--radius-md);
+        transition: all 0.3s ease;
+      }
+
+      .chatbot-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .chatbot-body {
+        padding: var(--spacing-4);
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .chatbot-message {
+        margin-bottom: var(--spacing-4);
+        animation: fadeInUp 0.3s ease;
+      }
+
+      .chatbot-message.bot {
+        text-align: left;
+      }
+
+      .chatbot-message.user {
+        text-align: right;
+      }
+
+      .message-bubble {
+        display: inline-block;
+        padding: var(--spacing-3) var(--spacing-4);
+        border-radius: var(--radius-lg);
+        max-width: 80%;
+        word-wrap: break-word;
+      }
+
+      .message-bubble.bot {
+        background: var(--secondary-100);
+        color: var(--secondary-800);
+      }
+
+      .message-bubble.user {
+        background: var(--primary-500);
+        color: white;
+      }
+
+      .chatbot-suggestions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2);
+        margin-top: var(--spacing-3);
+      }
+
+      .suggestion-btn {
+        background: var(--primary-50);
+        border: 1px solid var(--primary-200);
+        color: var(--primary-700);
+        padding: var(--spacing-2) var(--spacing-3);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        font-size: var(--font-size-sm);
+      }
+
+      .suggestion-btn:hover {
+        background: var(--primary-100);
+        border-color: var(--primary-300);
+        transform: translateY(-1px);
+      }
+
+      .chatbot-input {
+        padding: var(--spacing-4);
+        border-top: 1px solid var(--secondary-200);
+      }
+
+      .input-group {
+        display: flex;
+        gap: var(--spacing-2);
+      }
+
+      .chatbot-input input {
+        flex: 1;
+        padding: var(--spacing-2) var(--spacing-3);
+        border: 1px solid var(--secondary-300);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+      }
+
+      .chatbot-input input:focus {
+        outline: none;
+        border-color: var(--primary-500);
+      }
+
+      .send-btn {
+        background: var(--primary-500);
+        border: none;
+        color: white;
+        padding: var(--spacing-2) var(--spacing-3);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .send-btn:hover {
+        background: var(--primary-600);
+      }
       
       /* Animations */
       @keyframes slideInDown {
@@ -440,6 +666,19 @@
         
         .card-modern-body {
           padding: var(--spacing-4);
+        }
+
+        .chatbot-window {
+          width: calc(100vw - 40px);
+          bottom: 70px;
+          right: 20px;
+          left: 20px;
+        }
+
+        .chatbot-button {
+          width: 50px;
+          height: 50px;
+          font-size: 1.2rem;
         }
       }
       
@@ -599,6 +838,51 @@
       {% block content %}{% endblock %}
     </main>
 
+    <!-- Floating Chatbot -->
+    <div class="chatbot-container">
+      <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+          <h6><i class="bi bi-chat-dots me-2"></i>WeCan Assistant</h6>
+          <button class="chatbot-close" onclick="toggleChatbot()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+          <div class="chatbot-message bot">
+            <div class="message-bubble bot">
+              Hi there! 👋 Need help with scheduling or pickups?
+            </div>
+          </div>
+          <div class="chatbot-suggestions">
+            <button class="suggestion-btn" onclick="handleSuggestion('How to schedule a pickup?')">
+              <i class="bi bi-calendar-plus me-2"></i>How to schedule a pickup?
+            </button>
+            <button class="suggestion-btn" onclick="handleSuggestion('QR Code not working')">
+              <i class="bi bi-qr-code me-2"></i>QR Code not working
+            </button>
+            <button class="suggestion-btn" onclick="handleSuggestion('When will my trash be collected?')">
+              <i class="bi bi-truck me-2"></i>When will my trash be collected?
+            </button>
+            <button class="suggestion-btn" onclick="handleSuggestion('Contact support')">
+              <i class="bi bi-headset me-2"></i>Contact support
+            </button>
+          </div>
+        </div>
+        <div class="chatbot-input">
+          <div class="input-group">
+            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="chatbot-button" onclick="toggleChatbot()" id="chatbotButton">
+        <div class="chatbot-pulse"></div>
+        <i class="bi bi-chat-dots"></i>
+      </button>
+    </div>
+
     <!-- Modern Footer -->
     <footer class="footer-modern">
       <div class="container">
@@ -713,6 +997,92 @@
             setTimeout(() => alert.remove(), 300);
           }, 5000);
         });
+      });
+
+      // Chatbot functionality
+      let chatbotOpen = false;
+
+      function toggleChatbot() {
+        const window = document.getElementById('chatbotWindow');
+        const button = document.getElementById('chatbotButton');
+        
+        chatbotOpen = !chatbotOpen;
+        
+        if (chatbotOpen) {
+          window.classList.add('open');
+          button.innerHTML = '<i class="bi bi-x"></i>';
+        } else {
+          window.classList.remove('open');
+          button.innerHTML = '<div class="chatbot-pulse"></div><i class="bi bi-chat-dots"></i>';
+        }
+      }
+
+      function handleSuggestion(question) {
+        addMessage(question, 'user');
+        
+        setTimeout(() => {
+          let response = '';
+          switch(question) {
+            case 'How to schedule a pickup?':
+              response = 'To schedule a pickup: 1) Log into your account 2) Go to Dashboard 3) Click "Request Pickup" 4) Fill out the form with your details. You\'ll receive a confirmation email once submitted!';
+              break;
+            case 'QR Code not working':
+              response = 'If your QR code isn\'t working: 1) Make sure the code is clean and not damaged 2) Try scanning in good lighting 3) Contact support if the issue persists. We can generate a new QR code for you.';
+              break;
+            case 'When will my trash be collected?':
+              response = 'Pickup times depend on your zone and request status. Check your Dashboard for real-time updates. Generally, pickups occur within 2-3 business days of approval.';
+              break;
+            case 'Contact support':
+              response = 'You can reach our support team at: 📧 info@wecan.com or 📞 888-734-0123. We\'re available Monday-Friday, 9am-5pm EST.';
+              break;
+            default:
+              response = 'Thanks for your question! For detailed assistance, please contact our support team or check our FAQ section.';
+          }
+          addMessage(response, 'bot');
+        }, 1000);
+      }
+
+      function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        
+        if (message) {
+          addMessage(message, 'user');
+          input.value = '';
+          
+          setTimeout(() => {
+            addMessage('Thank you for your message! Our team will get back to you soon. For immediate assistance, please call 888-734-0123.', 'bot');
+          }, 1000);
+        }
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+          sendMessage();
+        }
+      }
+
+      function addMessage(text, sender) {
+        const chatBody = document.getElementById('chatbotBody');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chatbot-message ${sender}`;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = `message-bubble ${sender}`;
+        bubbleDiv.textContent = text;
+        
+        messageDiv.appendChild(bubbleDiv);
+        chatBody.appendChild(messageDiv);
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      // Close chatbot when clicking outside
+      document.addEventListener('click', function(event) {
+        const chatbotContainer = document.querySelector('.chatbot-container');
+        if (chatbotOpen && !chatbotContainer.contains(event.target)) {
+          toggleChatbot();
+        }
       });
     </script>
     

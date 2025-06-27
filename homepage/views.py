@@ -26,7 +26,34 @@ def home(request):
 
 @login_required
 def schedule(request):
-    return render(request, 'schedule.html')
+    # Get user's recycling statistics
+    subscriber = None
+    stats = {
+        'items_recycled': 0,
+        'total_earned': 0.00,
+        'pickups_completed': 0,
+        'co2_saved': 0.00
+    }
+    
+    try:
+        subscriber = Subscriber.objects.get(account_id=request.user.id)
+        
+        # Calculate statistics
+        recycling_history = subscriber.recycling_history.all()
+        stats['items_recycled'] = sum(history.items_recycled for history in recycling_history)
+        stats['total_earned'] = float(sum(history.points_earned for history in recycling_history))
+        stats['pickups_completed'] = recycling_history.count()
+        # CO2 calculation: 0.02kg per recycled item
+        stats['co2_saved'] = round(stats['items_recycled'] * 0.02, 2)
+        
+    except Subscriber.DoesNotExist:
+        pass
+    
+    context = {
+        'subscriber': subscriber,
+        'stats': stats
+    }
+    return render(request, 'schedule.html', context)
 
 def services(request):
     return render(request, 'services.html') 
